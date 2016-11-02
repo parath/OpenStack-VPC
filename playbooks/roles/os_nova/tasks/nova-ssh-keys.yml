@@ -1,0 +1,60 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create the nova system user
+  user:
+    name: "{{ nova_system_user }}"
+    group: "{{ nova_system_group }}"
+    comment: "OpenStack Nova Daemons"
+    shell: "/bin/bash"
+    system: "yes"
+    createhome: "yes"
+    home: "/var/lib/nova"
+    generate_ssh_key: "yes"
+  tags:
+    - nova-user
+    - nova-key
+
+- name: Create .ssh nova dir
+  file:
+    path: /var/lib/nova/.ssh
+    state: directory
+    owner: "{{ nova_system_user }}"
+    group: "{{ nova_system_group }}"
+    mode: 0755
+
+#- name: Check for nova ssh keys
+#  shell: stat /var/lib/nova/.ssh/id_rsa
+#  register: nova_key_exists
+
+
+#- name: Generate nova ssh keys
+#  shell: ssh-keygen -b 2048 -t rsa -f /var/lib/nova/.ssh/id_rsa -q -N ""
+#  args:
+#    creates: /var/lib/nova/id_rsa
+#   when:
+#     - nova_key_exists
+
+- name: Create the nova SSH config file
+  copy:
+    src: "ssh_config"
+    dest: "/var/lib/nova/.ssh/config"
+    owner: "{{ nova_system_user }}"
+    group: "{{ nova_system_group }}"
+    mode: "0644"
+  tags:
+    - nova-key
+
+- name: Get public key contents and store as var
+  command: |
+    cat /var/lib/nova/.ssh/id_rsa.pub
+  register: nova_pub
+  changed_when: false
+  tags:
+    - nova-key
+
+- name: Register a fact for the nova pub key
+  set_fact:
+     nova_pubkey: "{{ nova_pub.stdout }}"
+  tags:
+    - nova-key

@@ -1,0 +1,53 @@
+# {{ ansible_managed }}
+
+[DEFAULT]
+core_plugin = ml2
+service_plugins = router
+allow_overlapping_ips = True
+rpc_backend = rabbit
+auth_strategy = keystone
+dhcp_agents_per_network = {{ neutron_dhcp_agents_per_network }}
+{% if neutron_dvr  %}
+outer_distributed =  True
+{%endif%}
+
+# Binds
+bind_host = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+bind_port = 9696
+
+# Nova
+notify_nova_on_port_status_changes = True
+notify_nova_on_port_data_changes = True
+
+[oslo_messaging_rabbit]
+rabbit_hosts = {{ rabbitmq_hosts }}
+rabbit_userid = {{ neutron_rabbitmq_user }}
+rabbit_password = {{ neutron_rabbitmq_pass }}
+rabbit_virtual_host = {{ neutron_rabbitmq_vhost }}
+
+[oslo_concurrency]
+lock_path = /var/lib/neutron/tmp
+
+[keystone_authtoken]
+auth_uri = http://{{ internal_vip }}:5000
+auth_url = http://{{ internal_vip }}:35357
+memcached_servers = {{ memcached_servers }}
+auth_type = password
+project_domain_name = {{ neutron_service_project_domain_id }}
+user_domain_name = {{ neutron_service_user_domain_id }}
+project_name = {{ neutron_service_project_name }}
+username = {{ neutron_service_user_name }}
+password = {{ neutron_service_user_pass }}
+
+[database]
+connection = mysql+pymysql://{{ neutron_db_user }}:{{ neutron_db_pass }}@{{ internal_vip }}/{{ neutron_db_name }}
+
+[nova]
+auth_url = http://{{ internal_vip }}:35357
+auth_type = password
+project_domain_name = {{ nova_service_project_domain_id }}
+user_domain_name = {{ nova_service_user_domain_id }}
+region_name = {{ nova_service_region }}
+project_name = {{ neutron_service_project_name }}
+username = {{ nova_service_user_name }}
+password = {{ nova_service_user_pass }}

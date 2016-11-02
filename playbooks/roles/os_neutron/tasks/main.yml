@@ -1,0 +1,16 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- include: neutron-install.yml
+- include: neutron-messaging.yml
+  when:
+    - inventory_hostname == groups['controllers'][1]
+
+- include: neutron-config.yml
+- include: neutron-service-create.yml
+  when:
+    - inventory_hostname == groups['controllers'][1]
+
+- include: neutron-database.yml
+  when:
+    - inventory_hostname == groups['controllers'][1]

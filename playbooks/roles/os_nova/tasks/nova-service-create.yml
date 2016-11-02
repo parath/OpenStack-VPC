@@ -1,0 +1,59 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create nova user
+  os_user:
+    state: present
+    name: "{{ nova_service_user_name }}"
+    password: "{{ nova_service_user_pass }}"
+    domain: "{{ nova_service_user_domain_id }}"
+    default_project: "{{ nova_service_project_name }}"
+    region_name: "{{ nova_service_region }}"
+    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+  tags:
+    - nova-service
+    - nova-service-user
+
+- name: Assosiate Nova user with role
+  os_user_role:
+    user: "{{ nova_service_user_name }}"
+    role: "{{ nova_service_role_name }}"
+    project: "{{ nova_service_project_name }}"
+    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+  tags:
+    - nova-service
+    - nova-service-user-role
+
+- name: Check if Nova service is present
+  shell: openstack service list
+  register: nova_service
+  tags:
+    - nova-service
+    - nova-service-entity
+
+- name: Create Nova service entity
+  shell: source /root/openrc && openstack service create --name {{ nova_service_name }} \
+         --description "OpenStack Compute" compute
+  when: "nova_service.stdout.find('nova') == -1"
+  tags:
+    - nova-service
+    - nova-service-entity
+
+- name: Check if Nova endpoints are present
+  shell: openstack endpoint list
+  register: nova_endpoint
+  tags:
+    - nova-service
+    - nova-service-endpoint
+
+- name: Create nova service endpoint
+  shell: source /root/openrc && openstack endpoint create --region {{ nova_service_region }} \
+         compute {{ item }} http://{{ internal_vip }}:8774/v2.1/%\(tenant_id\)s
+  when: "nova_endpoint.stdout.find('nova') == -1"
+  with_items:
+    - "public"
+    - "internal"
+    - "admin"
+  tags:
+    - nova-service
+    - nova-service-endpoint

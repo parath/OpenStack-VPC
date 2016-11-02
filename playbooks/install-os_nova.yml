@@ -1,0 +1,8 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install Openstack Nova
+  hosts: nova
+  user: root
+  roles:
+    - os_nova

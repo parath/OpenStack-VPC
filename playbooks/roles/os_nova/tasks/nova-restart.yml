@@ -1,0 +1,30 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Restart control plane services
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - "{{ nova_control_plane_services }}"
+  when:
+    - inventory_hostname in groups['nova_control']
+  tags:
+    - nova-config
+    - nova-restart
+    - nova-control-plane-restart
+
+- name: Restart compute services
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - "{{ nova_compute_services }}"
+  when:
+    - inventory_hostname in groups['nova_compute']
+  tags:
+    - nova-config
+    - nova-restart
+    - nova-compute-restart

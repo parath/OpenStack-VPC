@@ -1,0 +1,22 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Enable listen option for libvirtd
+  lineinfile:
+    dest: "/etc/sysconfig/libvirtd"
+    regexp: '#LIBVIRTD_ARGS="--listen"'
+    line: 'LIBVIRTD_ARGS="--listen"'
+    state: present
+  tags:
+   - nova-config
+   - nova-libvirt-config
+
+- name: Enable tcp listen
+  lineinfile:
+    dest: "/etc/libvirt/libvirtd.conf"
+    regexp: '{{ item }}'
+    line: 'LIBVIRTD_ARGS="--listen"'
+    state: present
+  tags:
+   - nova-config
+   - nova-libvirt-config

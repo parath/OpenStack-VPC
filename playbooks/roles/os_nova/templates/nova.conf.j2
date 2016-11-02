@@ -1,0 +1,85 @@
+[DEFAULT]
+enabled_apis = osapi_compute,metadata
+rpc_backend = rabbit
+auth_strategy = keystone
+my_ip = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+use_neutron = True
+firewall_driver = nova.virt.firewall.NoopFirewallDriver
+state_path=/var/lib/nova
+compute_driver=libvirt.LibvirtDriver
+osapi_compute_listen = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+metadata_listen = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+allow_resize_to_same_host=true
+memcached_servers = {{ memcached_servers }}
+
+[api_database]
+connection = mysql+pymysql://{{ nova_db_user }}:{{ nova_db_pass }}@{{ internal_vip }}/{{ nova_api_db_name }}
+
+[database]
+connection = mysql+pymysql://{{ nova_db_user }}:{{ nova_db_pass }}@{{ internal_vip }}/{{ nova_db_name }}
+
+[oslo_messaging_rabbit]
+rabbit_hosts = {{ rabbitmq_hosts }}
+rabbit_userid = {{ nova_rabbitmq_user }}
+rabbit_password = {{ nova_rabbitmq_pass }}
+rabbit_virtual_host = {{ nova_rabbitmq_vhost }}
+
+[keystone_authtoken]
+auth_uri = http://{{ internal_vip }}:5000
+auth_url = http://{{internal_vip }}:35357
+memcached_servers = {{ memcached_servers }}
+auth_type = password
+project_domain_name = {{ nova_service_project_domain_id }}
+user_domain_name = {{ nova_service_user_domain_id }}
+project_name = {{ nova_service_project_name }}
+username = {{ nova_service_user_name }}
+password = {{ nova_service_user_pass }}
+
+[vnc]
+enabled = True
+vncserver_listen = 0.0.0.0
+vncserver_proxyclient_address = $my_ip
+novncproxy_base_url = http://{{ external_vip }}:6080/vnc_auto.html
+novncproxy_host = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+
+[glance]
+api_servers = http://{{ internal_vip }}:9292
+
+[oslo_concurrency]
+lock_path = /var/lib/nova/tmp
+
+[libvirt]
+virt_type = {{ nova_hypervisor_mode }}
+{% if ceph_mons is defined %}
+
+images_type = rbd
+images_rbd_pool = {{ nova_ceph_pool }}
+images_rbd_ceph_conf = /etc/ceph/ceph.conf
+rbd_user = {{ nova_ceph_client }}
+rbd_secret_uuid = {{ nova_ceph_uuid }}
+disk_cachemodes="network=writeback"
+inject_password = false
+inject_key = false
+inject_partition = -2
+live_migration_flag="VIR_MIGRATE_UNDEFINE_SOURCE,VIR_MIGRATE_PEER2PEER,VIR_MIGRATE_LIVE,VIR_MIGRATE_PERSIST_DEST,VIR_MIGRATE_TUNNELLED"
+hw_disk_discard = unmap
+{%endif%}
+
+[neutron]
+url = http://{{ internal_vip }}:9696
+auth_url = http://{{ internal_vip }}:35357
+auth_type = password
+project_domain_name = {{ neutron_service_project_domain_id }}
+user_domain_name = {{ neutron_service_user_domain_id }}
+region_name = {{ neutron_service_region }}
+project_name = {{ neutron_service_project_name }}
+username = {{ neutron_service_user_name }}
+password = {{ neutron_service_user_pass }}
+
+service_metadata_proxy = True
+metadata_proxy_shared_secret = {{ neutron_metadata_agent_secret }}
+
+[cinder]
+os_region_name = RegionOne
+
+

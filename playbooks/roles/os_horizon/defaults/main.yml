@@ -1,0 +1,53 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+# Horizon packages
+horizon_yum_packages:
+  - openstack-dashboard
+
+local_ip: "{{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}"
+
+# Horizon debug level
+debug: no
+
+horizon_session_timeout: 1800
+
+horizon_help_url: "http://docs.openstack.org"
+
+horizon_galera_database: horizon
+
+# Glance Database details
+horizon_db_name: horizon
+horizon_db_pass: "!horizon!"
+horizon_db_user: horizon
+horizon_db_hosts: "{% for host in groups['galera'] %}{{ hostvars[host]['ansible_br_mgmt']['ipv4']['address'] }}{% if not loop.last %},{% endif %}{% endfor %}"
+
+horizon_launch_instance_legacy: False
+horizon_launch_instance_ng: True
+
+
+horizon_endpoint_type: internalURL
+
+horizon_webroot: /
+
+horizon_default_role_name: _member_
+
+# OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT
+horizon_keystone_multidomain_support: False
+
+# Horizon password autocomplete
+horizon_pass_autocomplete: on
+
+# OPENSTACK_CINDER_FEATURES
+horizon_enable_backup: True
+
+# OPENSTACK_NEUTRON_NETWORK
+horizon_enable_router: True
+horizon_enable_quotas: True
+horizon_enable_ipv6: True
+horizon_enable_distributed_router: "{{ neutron_dvr }}"
+horizon_enable_ha_router: False
+horizon_enable_lb: False
+horizon_enable_firewall: False
+horizon_enable_vpn: False
+horizon_enable_fip_topology_check: True

@@ -1,0 +1,17 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Drop glance config
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/glance/{{ item }}"
+    owner: "{{ glance_system_user }}"
+    group: "{{ glance_system_group }}"
+    mode: 0644
+  with_items:
+    - glance-api.conf
+    - glance-registry.conf
+  notify: Glance services restart
+  tags:
+    - glance-config
+    - glance-setup

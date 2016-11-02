@@ -1,0 +1,8 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install Openstack Cinder
+  hosts: cinder_all
+  user: root
+  roles:
+    - os_cinder

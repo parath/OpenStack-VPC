@@ -1,0 +1,8 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Setup galera cluster
+  hosts: galera
+  user: root
+  roles:
+    - galera

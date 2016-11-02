@@ -1,0 +1,46 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Drop neutron config files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner|default(neutron_system_user) }}"
+    group: "{{ item.group|default(neutron_system_group) }}"
+    mode: "0644"
+  with_items:
+    - src: "neutron.conf.j2"
+      dest: "/etc/neutron/neutron.conf"
+    - src: "{{ neutron_plugins[neutron_plugin_type].plugin_ini }}.j2"
+      dest: "/etc/neutron/{{ neutron_plugins[neutron_plugin_type].plugin_ini }}"
+    - src: "metadata_agent.ini.j2"
+      dest: "/etc/neutron/metadata_agent.ini"
+    - src: "dhcp_agent.ini.j2"
+      dest: "/etc/neutron/dhcp_agent.ini"
+  notify:
+    - Restart neutron services
+  tags:
+    - neutron-config
+
+- name: Generate neutron agent only Config
+  template:
+    src: "{{ item.value.service_conf }}.j2"
+    dest: "/etc/neutron/{{ item.value.service_conf }}"
+    owner: "{{ neutron_system_user }}"
+    group: "{{ neutron_system_group }}"
+    mode: "0644"
+  with_dict: "{{ neutron_services }}"
+  notify:
+    - Restart neutron services
+  when:
+    - item.value.service_en | bool
+    - item.value.service_conf is defined
+    - inventory_hostname in groups[item.value.group]
+  tags:
+    - neutron-config
+
+- name: Link config files
+  file:
+    state: link
+    src: /etc/neutron/plugins/ml2/ml2_conf.ini
+    dest: /etc/neutron/plugin.ini

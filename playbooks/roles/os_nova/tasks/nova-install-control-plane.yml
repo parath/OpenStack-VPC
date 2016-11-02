@@ -1,0 +1,11 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install Nova control plane
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ nova_control_plane_yum_packages }}"
+  tags:
+    - nova-control-plane-setup

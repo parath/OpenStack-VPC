@@ -1,0 +1,16 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+
+- include: heat-install.yml
+- include: heat-config.yml
+- include: heat-service.yml
+  when:
+    - inventory_hostname == groups['controllers'][0]
+
+- include: heat-database.yml
+  when:
+    - inventory_hostname == groups['controllers'][0]
+- include: heat-messaging.yml
+  when:
+    - inventory_hostname == groups['controllers'][0]

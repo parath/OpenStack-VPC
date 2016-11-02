@@ -1,0 +1,5 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- include: horizon-install.yml
+- include: horizon-config.yml

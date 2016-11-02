@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+
+# Linux bridge agent physical interface mappings
+[ovs]
+local_ip = {{ hostvars[inventory_hostname]['ansible_br_tunnel']['ipv4']['address'] }}
+enable_tunneling = True
+bridge_mappings = {{ neutron_plugins[neutron_plugin_type].network_mappings }}
+
+[agent]
+l2_population = True
+tunnel_types = vxlan
+{% if neutron_dvr  %}enable_distributed_routing =  True {%endif%}
+
+# Security groups
+[securitygroup]
+firewall_driver = {{ neutron_plugins[neutron_plugin_type].driver_firewall }}
+enable_security_group = True
+enable_ipset = True

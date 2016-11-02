@@ -1,0 +1,12 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Cinder configuration
+  template:
+    src: cinder.conf.j2
+    dest: /etc/cinder/cinder.conf
+    mode: 0644
+    owner: "{{ cinder_system_user }}"
+    group: "{{ cinder_system_group }}"
+  tags:
+    - cinder-config

@@ -1,0 +1,14 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+
+## Default credentials
+openrc_os_username: admin
+openrc_os_tenant_name: admin
+openstack_admin_pass: stack123
+openrc_os_auth_url: "{{ internal_vip }}"
+
+## Create file
+openrc_file_dest: /root/openrc"
+openrc_file_owner: root
+openrc_file_group: root

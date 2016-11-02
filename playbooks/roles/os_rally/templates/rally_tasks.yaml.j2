@@ -1,0 +1,251 @@
+{% set flavor_name = flavor_name or "m1.tiny" %}
+{% set image_name = image_name or "CirrOS" %}
+{% set availability_zone = availability_zone or "nova" %}
+---
+  KeystoneBasic.create_tenant_with_users:
+    -
+      args:
+        users_per_tenant: 10
+      runner:
+        type: "constant"
+        times: 10
+        concurrency: 10
+#
+  GlanceImages.create_and_delete_image:
+    -
+      args:
+        image_location: "http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img"
+        container_format: "bare"
+        disk_format: "qcow2"
+      runner:
+        type: "constant"
+        times: 10
+        concurrency: 2
+      context:
+        users:
+          tenants: 2
+          users_per_tenant: 3
+# Test boot and delete
+  NovaServers.boot_and_delete_server:
+    - args:
+        flavor:
+            name: "{{flavor_name}}"
+        image:
+            name: "{{ image_name }}"
+        force_delete: false
+      runner:
+        type: "constant"
+        times: 1
+        concurrency: 1
+      context:
+        users:
+          tenants: 3
+          users_per_tenant: 2
+    - args:
+        flavor:
+            name: "{{flavor_name}}"
+        image:
+            name: "{{ image_name }}"
+        auto_assign_nic: true
+      runner:
+        type: "constant"
+        times: 1
+        concurrency: 1
+      context:
+        users:
+          tenants: 5
+          users_per_tenant: 2
+        network:
+          start_cidr: "10.2.0.0/24"
+          networks_per_tenant: 2 
+# Test live migrate
+  NovaServers.boot_and_live_migrate_server:
+    - args:
+        flavor:
+          name: "{{flavor_name}}"
+        image:
+          name: "{{ image_name }}"
+        block_migration: false
+      runner:
+        type: "constant"
+        times: 1
+        concurrency: 1
+      context:
+        users:
+          tenants: 1
+          users_per_tenant: 1
+
+# Boot and snapshot
+  NovaServers.snapshot_server:
+    - args:
+        flavor:
+          name: "{{flavor_name}}"
+        image:
+          name: "{{ image_name }}"
+        force_delete: false
+      runner:
+        type: "constant"
+        times: 1
+        concurrency: 1
+      context:
+        users:
+          tenants: 1
+          users_per_tenant: 1
+# Resize
+  NovaServers.resize_server:
+    - args:
+        flavor:
+            name: "{{flavor_name}}"
+        image:
+            name: "{{ image_name }}"
+        to_flavor:
+            name: "m1.small"
+        confirm: true
+        force_delete: false
+      runner:
+        type: "constant"
+        times: 1
+        concurrency: 1
+      context:
+        users:
+          tenants: 1
+          users_per_tenant: 1
+# Console
+  NovaServers.boot_and_get_console_output:
+    -
+      args:
+        flavor:
+            name: "{{flavor_name}}"
+        image:
+            name: "{{image_name}}"
+      runner:
+        type: "constant"
+        times: 1
+        concurrency: 1
+      context:
+        users:
+          tenants: 1
+          users_per_tenant: 1
+
+# Cinder create and attach volume
+  CinderVolumes.create_and_attach_volume:
+    -
+      args:
+          size: 10
+          image:
+            name: "{{image_name}}"
+          flavor:
+            name: "{{flavor_name}}"
+          create_volume_params:
+            availability_zone: "{{availability_zone}}"
+      runner:
+        type: "constant"
+        times: 1
+        concurrency: 1
+      context:
+        users:
+          tenants: 2
+          users_per_tenant: 2
+        api_versions:
+          cinder:
+            version: 2
+            service_type: volumev2
+    -
+      args:
+        size:
+          min: 1
+          max: 5
+        flavor:
+            name: "{{flavor_name}}"
+        image:
+            name: "{{image_name}}"
+        create_volume_params:
+            availability_zone: "{{availability_zone}}"
+      runner:
+        type: "constant"
+        times: 1
+        concurrency: 1
+      context:
+        users:
+          tenants: 2
+          users_per_tenant: 2
+        api_versions:
+          cinder:
+            version: 2
+            service_type: volumev2
+
+# Create volume backup
+  CinderVolumes.create_volume_backup:
+    -
+      args:
+        size: 10
+        do_delete: True
+        create_volume_kwargs: {}
+        create_backup_kwargs: {}
+      runner:
+        type: "constant"
+        times: 1
+        concurrency: 1
+      context:
+        users:
+          tenants: 1
+          users_per_tenant: 1
+        roles:
+          - "member"
+        api_versions:
+          cinder:
+            version: 2
+            service_type: volumev2
+
+# Create volume snapshot and attach
+  CinderVolumes.create_snapshot_and_attach_volume:
+    -
+      args:
+          volume_type: false
+          size:
+              min: 1
+              max: 5
+      runner:
+        type: "constant"
+        times: 4
+        concurrency: 2
+      context:
+        users:
+          tenants: 2
+          users_per_tenant: 1
+        servers:
+          image:
+            name: "{{image_name}}"
+          flavor:
+            name: "{{flavor_name}}"
+          servers_per_tenant: 2
+        api_versions:
+          cinder:
+            version: 2
+            service_type: volumev2
+    -
+      args:
+          volume_type: true
+          size:
+              min: 1
+              max: 5
+      runner:
+        type: "constant"
+        times: 4
+        concurrency: 2
+      context:
+        users:
+          tenants: 2
+          users_per_tenant: 1
+        servers:
+          image:
+            name: "{{image_name}}"
+          flavor:
+            name: "{{flavor_name}}"
+          servers_per_tenant: 2
+        api_versions:
+          cinder:
+            version: 2
+            service_type: volumev2
+
+

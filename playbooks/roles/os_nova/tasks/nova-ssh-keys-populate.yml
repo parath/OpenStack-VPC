@@ -1,0 +1,10 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create authorized keys file from host vars
+  authorized_key:
+    user: "{{ nova_system_user }}"
+    key: "{{ hostvars[item]['nova_pubkey'] }}"
+  with_items: groups['nova_compute']
+  tags:
+    - nova-key

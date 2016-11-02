@@ -1,0 +1,12 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Restart neutron services
+  service:
+    name: "{{ item.value.service_name }}"
+    state: restarted
+    pattern: "{{ item.value.service_name }}"
+    enabled: yes
+  with_dict: neutron_services
+  failed_when: false
+  when: item.value.service_en | bool

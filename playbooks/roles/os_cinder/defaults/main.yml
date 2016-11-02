@@ -1,0 +1,59 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+# Cinder Database details
+cinder_db_name: cinder
+cinder_db_pass: "!cinder!"
+cinder_db_user: cinder
+
+# cinder system details
+cinder_system_user: cinder
+cinder_system_group: cinder
+
+# cinder service details
+cinder_service_user_name: cinder
+cinder_service_user_pass: cinder_pass
+cinder_service_role_name: "admin"
+cinder_service_project_domain_id: default
+cinder_service_user_domain_id: default
+cinder_service_project_name: service
+cinder_service_region: RegionOne
+
+# cinder RabbitMQ info
+cinder_rabbitmq_userid: cinder
+cinder_rabbitmq_pass: cinder
+cinder_rabbitmq_vhost: /cinder
+
+# cinder services names
+cinder_control_plane_services:
+  - openstack-cinder-api
+  - openstack-cinder-scheduler
+
+cinder_volume_services:
+  - openstack-cinder-volume
+  - target
+
+# cinder packages
+cinder_yum_packages:
+  - openstack-cinder
+
+cinder_yum_volume_packages:
+  - lvm2
+
+# cinder common support packges
+cinder_yum_support_packages:
+  - python-pip
+  - MySQL-python
+  - mysql-devel
+
+cinder_pip_packages:
+  - shade
+  - MySQL-python
+  - osprofiler
+
+# Cinder Ceph info
+cinder_ceph_client: cinder
+cinder_ceph_pool: volumes
+cinder_backup_ceph_pool: backups
+cinder_backup_ceph_client: cinder-backup
+cinder_ceph_uuid: "{{ ceph_uuid }}"

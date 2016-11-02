@@ -1,0 +1,124 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create Heat user
+  os_user:
+    state: present
+    name: "{{ heat_service_user_name }}"
+    password: "{{ heat_service_user_pass }}"
+    domain: "{{ heat_service_user_domain_id }}"
+    default_project: "{{ heat_service_project_name }}"
+    region_name: "{{ heat_service_region }}"
+    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }} user_domain_name=default project_domain_name=default
+  tags:
+    - heat-service
+
+- name: Assosiate Heat user with admin role
+  os_user_role:
+    user: "{{ heat_service_user_name }}"
+    role: "{{ heat_service_role_name }}"
+    project: "{{ heat_service_project_name }}"
+    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+  tags:
+    - heat-service
+
+- name: Check if Heat service is present
+  shell: openstack service list
+  register: heat_service
+  tags:
+    - heat-service
+
+- name: Create heat service entity
+  shell: source /root/openrc && openstack service create --name {{ heat_service_user_name }} \
+           --description "Orchestration" orchestration
+  when: "heat_service.stdout.find('heat') == -1"
+  tags:
+    - heat-service
+
+- name: Create heat-cfn service entity
+  shell: source /root/openrc && openstack service create --name {{ heat_cfn_service_user_name }} \
+           --description "Orchestration" cloudformation
+  when: "heat_service.stdout.find('heat-cfn') == -1"
+  tags:
+    - heat-service
+
+- name: Check if heat endpoints are present
+  shell: openstack endpoint list
+  register: heat_endpoint
+  tags:
+    - heat-service
+
+- name: Create heat service endpoint
+  shell: source /root/openrc && openstack endpoint create --region {{ heat_service_region }} orchestration {{ item }} http://{{ internal_vip }}:8004/v1/%\(tenant_id\)s
+  when: "heat_endpoint.stdout.find('heat') == -1"
+  with_items:
+    - "public"
+    - "internal"
+    - "admin"
+  tags:
+    - heat-service
+    - heat-endpoint
+
+- name: Create heat-cfn service endpoint
+  shell: source /root/openrc && openstack endpoint create --region {{ heat_service_region }} cloudformation {{ item }} http://{{ internal_vip }}:8000/v1
+  when: "heat_endpoint.stdout.find('heat') == -1"
+  with_items:
+    - "public"
+    - "internal"
+    - "admin"
+  tags:
+    - heat-service
+    - heat-endpoint
+
+- name: Check if Heat domain is present
+  shell: openstack domain list
+  register: heat_domain
+  tags:
+    - heat-service
+
+- name: Create Heat domain
+  shell: openstack domain create --description "Stack projects and users" heat
+  when: "heat_domain.stdout.find('heat') == -1"
+
+- name: Create Heat domain admin
+  os_user:
+    state: present
+    name: "{{ heat_domain_admin_name }}"
+    password: "{{ heat_domain_admin_pass }}"
+    domain: "{{ heat_domain_id }}"
+    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }} user_domain_name=default project_domain_name=default
+  tags:
+    - heat-service
+
+- name: Assosiate Heat domain admin with admin
+  os_user_role:
+    user: "{{ heat_domain_admin_name }}"
+    role: "{{ heat_domain_admin_role }}"
+    project: "{{ heat_service_project_name }}"
+    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }} user_domain_name=default project_domain_name=default
+  tags:
+    - heat-service
+
+- name: Check if heat_stack_owner role is present
+  shell: openstack role list
+  register: heat_role
+  tags:
+    - heat-service
+
+- name: Create heat_stack_owner role
+  shell: source /root/openrc && openstack role create {{ heat_stack_owner }}
+  when: "heat_role.stdout.find('{{ heat_stack_owner }}') == -1"
+  tags:
+    - heat-service
+
+- name: Check if heat_stack_user role is present
+  shell: openstack role list
+  register: heat_role
+  tags:
+    - heat-service
+
+- name: Create heat_stack_user role
+  shell: source /root/openrc && openstack role create {{ heat_stack_user }}
+  when: "heat_role.stdout.find('{{ heat_stack_user }}') == -1"
+  tags:
+    - heat-service

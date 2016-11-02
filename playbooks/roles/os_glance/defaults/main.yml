@@ -1,0 +1,44 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+# Glance Database details
+glance_db_name: glance
+glance_db_pass: "!glance!"
+glance_db_user: glance
+
+# Glance system details
+glance_system_user: glance
+glance_system_group: glance
+
+# Glance service details
+glance_service_user_name: glance
+glance_service_user_pass: glance_pass
+glance_service_role_name: "admin"
+glance_service_project_domain_id: default
+glance_service_user_domain_id: default
+glance_service_project_name: service
+glance_service_region: RegionOne
+
+# Glance RabbitMQ info
+glance_rabbitmq_userid: glance
+glance_rabbitmq_pass: glance
+glance_rabbitmq_vhost: /glance
+
+# Glance services names
+glance_service_names:
+  - openstack-glance-api
+  - openstack-glance-registry
+
+# Glance packages
+glance_yum_packages:
+  - openstack-glance
+  - python-rbd
+
+# Glance store
+glance_default_store: file
+glance_store: file,http
+
+# Glance Ceph properties
+ceph_glance_pool: images
+ceph_glance_user: glance
+

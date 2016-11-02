@@ -1,0 +1,25 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Ensure Rabbitmq vhost
+  rabbitmq_vhost:
+    name: "{{ cinder_rabbitmq_vhost }}"
+    state: "present"
+  delegate_to: "{{ groups['rabbitmq'][0] }}"
+  tags:
+    - cinder-rabbitmq
+    - cinder-rabbitmq-vhost
+
+- name: Ensure rabbitmq user
+  rabbitmq_user:
+    user: "{{ cinder_rabbitmq_userid }}"
+    password: "{{ cinder_rabbitmq_pass }}"
+    vhost: "{{ cinder_rabbitmq_vhost }}"
+    configure_priv: ".*"
+    read_priv: ".*"
+    write_priv: ".*"
+    state: "present"
+  delegate_to: "{{ groups['rabbitmq'][0] }}"
+  tags:
+    - cinder-rabbitmq
+    - cinder-rabbitmq-user

@@ -1,0 +1,6 @@
+---
+# Copyright 2015, Stackmasters.eu
+
+- name: Gather facts
+  hosts: all
+  user: root

@@ -1,0 +1,37 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Drop keystone.conf file
+  template:
+    src: "keystone.conf.j2"
+    dest: "/etc/keystone/keystone.conf"
+    owner: "{{ keystone_system_user_name }}"
+    group: "{{ keystone_system_group_name }}"
+    mode: 0644
+  notify: Restart apache
+  tags:
+    - keystone-config
+    - keystone-setup
+
+- name: Search and replace ServerName in httpd.conf
+  lineinfile:
+    dest: "/etc/httpd/conf/httpd.conf"
+#    regexp: "((^ServerName\ \w*$)|(^#ServerName\ \w*$))"
+    line: "ServerName {{ hostvars[inventory_hostname]['ansible_nodename'] }}" 
+    state: present
+  notify: Restart apache
+  tags:
+   - keystone-config
+   - keystone-apache-configuration
+
+- name: Create wsgi-keystone.conf
+  template:
+    src: "wsgi-keystone.conf.j2"
+    dest: "/etc/httpd/conf.d/wsgi-keystone.conf"
+    owner: apache
+    group: apache
+    mode: 0644
+  notify: Restart apache
+  tags:
+    - keystone-config
+    - keystone-apache-configuration

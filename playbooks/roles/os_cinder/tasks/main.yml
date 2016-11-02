@@ -1,0 +1,16 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- include: cinder-pre-install.yml
+- include: cinder-install.yml
+- include: cinder-service.yml
+  when:
+    - inventory_hostname == groups['cinder_control'][0]
+- include: cinder-messaging.yml
+  when:
+    - inventory_hostname == groups['cinder_control'][0]
+- include: cinder-config.yml
+- include: cinder-database.yml
+  when:
+    - inventory_hostname == groups['cinder_control'][0]
+- include: cinder-restart.yml

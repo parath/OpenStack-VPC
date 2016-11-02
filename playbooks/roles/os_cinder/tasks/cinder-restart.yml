@@ -1,0 +1,30 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Restart control plane services
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - "{{ cinder_control_plane_services }}"
+  when:
+    - inventory_hostname in groups['cinder_control']
+  tags:
+    - cinder-config
+    - cinder-restart
+    - cinder-control-plane-restart
+
+- name: Restart cinder volume services
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - "{{ cinder_volume_services }}"
+  when:
+    - inventory_hostname in groups['cinder_volume']
+  tags:
+    - cinder-config
+    - cinder-restart
+    - cinder-volume-restart

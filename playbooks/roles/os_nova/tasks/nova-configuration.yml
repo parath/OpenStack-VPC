@@ -1,0 +1,12 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Drop nova configuration
+  template:
+    src: nova.conf.j2
+    dest: /etc/nova/nova.conf
+    owner: "{{ nova_system_user }}"
+    group: "{{ nova_system_group }}"
+    mode: 0644
+  tags:
+    - nova-config

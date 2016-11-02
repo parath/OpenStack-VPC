@@ -1,0 +1,32 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Change apache default listen IP
+  lineinfile:
+    state: present
+    dest: "/etc/httpd/conf/httpd.conf"
+    regexp: Listen ([1-9].*:80)
+    line: "Listen {{ local_ip }}:80"
+  notify: Restart httpd
+  tags:
+    - horizon-config
+
+- name: Drop horizon local_settings
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/openstack-dashboard/{{ item }}"
+  with_items:
+    - "local_settings"
+  notify: Restart httpd
+  tags:
+    - horizon-config
+
+- name: Drop horizon httpd config
+  template:
+    src: "{{item}}.j2"
+    dest: "/etc/httpd/conf.d/{{ item }}"
+  with_items:
+    - "openstack-dashboard.conf"
+  notify: Restart httpd
+  tags:
+    - horizon-config

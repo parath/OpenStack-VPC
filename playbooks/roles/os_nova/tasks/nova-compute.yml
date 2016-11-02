@@ -1,0 +1,11 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Installl Nova compute
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "{{ nova_compute_yum_packages }}"
+  tags:
+    - nova-compute-setup

@@ -1,0 +1,54 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create cinder user
+  os_user:
+    state: present
+    name: "{{ cinder_service_user_name }}"
+    password: "{{ cinder_service_user_pass }}"
+    domain: "{{ cinder_service_user_domain_id }}"
+    default_project: "{{ cinder_service_project_name }}"
+    region_name: "{{ cinder_service_region }}"
+    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }} user_domain_name=default project_domain_name=default
+  tags:
+    - cinder-service
+
+- name: Assosiate cinder user with admin role
+  os_user_role:
+    user: "{{ cinder_service_user_name }}"
+    role: "{{ cinder_service_role_name }}"
+    project: "{{ cinder_service_project_name }}"
+    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+  tags:
+    - cinder-service
+
+- name: Check if cinder service is present
+  shell: openstack service list
+  register: cinder_service
+  tags:
+    - cinder-service
+
+- name: Create cinder service entity
+  shell: source /root/openrc && openstack service create --name cinderv2 \
+         --description "OpenStack Block Storage" volumev2
+  when: "cinder_service.stdout.find('cinder') == -1"
+  tags:
+    - cinder-service
+
+- name: Check if cinder endpoints are present
+  shell: openstack endpoint list
+  register: cinder_endpoint
+  tags:
+    - cinder-service
+
+- name: Create cinder service endpoint
+  shell: source /root/openrc && openstack endpoint create --region {{ cinder_service_region }} \
+         volumev2 {{ item }} http://{{ internal_vip }}:8776/v2/%\(tenant_id\)s
+  when: "cinder_endpoint.stdout.find('cinder') == -1"
+  with_items:
+    - "public"
+    - "internal"
+    - "admin"
+  tags:
+    - cinder-service
+    - cinder-endpoint

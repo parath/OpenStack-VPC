@@ -1,0 +1,12 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install Keystone
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "{{ keystone_yum_packages }}"
+  tags:
+    - keystone-setup
+    - keystone-install

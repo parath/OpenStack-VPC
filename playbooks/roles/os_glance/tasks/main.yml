@@ -1,0 +1,13 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+
+- include: glance-install.yml
+- include: glance-config.yml
+- include: glance-service.yml
+  when:
+    - inventory_hostname == groups['controllers'][1]
+
+- include: glance-database.yml
+  when:
+    - inventory_hostname == groups['controllers'][1]

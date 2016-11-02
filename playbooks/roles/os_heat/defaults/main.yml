@@ -1,0 +1,51 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+# Glance Database details
+heat_db_name: heat
+heat_db_pass: "!heat!"
+heat_db_user: heat
+
+# Glance system details
+heat_system_user: heat
+heat_system_group: heat
+
+# Glance service details
+heat_service_user_name: heat
+heat_service_user_pass: heat_pass
+heat_service_role_name: "admin"
+heat_service_project_domain_id: default
+heat_service_user_domain_id: default
+heat_service_project_name: service
+heat_service_region: RegionOne
+heat_cfn_service_user_name: heat-cfn
+
+# Heat stack admin
+heat_domain_admin_name: "heat_domain_admin"
+heat_domain_admin_pass: heat123
+heat_domain_admin_role: "admin"
+heat_domain_id: "heat"
+
+# Heat stack roles
+heat_stack_owner_role: heat_stack_owner
+heat_stack_user_role: heat_stack_user
+
+
+# Glance RabbitMQ info
+heat_rabbitmq_user: heat
+heat_rabbitmq_pass: heat
+heat_rabbitmq_vhost: /heat
+
+# Glance services names
+heat_service_names:
+  - openstack-heat-api
+  - openstack-heat-api-cfn
+  - openstack-heat-engine
+
+# Glance packages
+heat_yum_packages:
+  - openstack-heat-api
+  - openstack-heat-api-cfn
+  - openstack-heat-engine
+  - python-rbd
+

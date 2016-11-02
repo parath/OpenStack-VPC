@@ -1,0 +1,11 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install Heat packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ heat_yum_packages }}"
+  tags:
+    - heat-install
+    - heat-ceph

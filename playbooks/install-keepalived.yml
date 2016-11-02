@@ -1,0 +1,9 @@
+---
+# Copyright 2015, Stackmasters.eu
+
+- name: Install keepalived
+  hosts: haproxy
+  user: root
+  roles:
+    - keepalived
+

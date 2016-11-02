@@ -1,0 +1,14 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- include: pre-install.yml
+- include: keystone-install.yml
+- include: keystone-configuration.yml
+- include: keystone-database.yml
+  when:  inventory_hostname  == groups['keystone'][0]
+
+- include: keystone-fernet-setup.yml
+- include: keystone-service-create.yml
+  when:  inventory_hostname  == groups['keystone'][0]
+  tags:
+    - keystone-service-create

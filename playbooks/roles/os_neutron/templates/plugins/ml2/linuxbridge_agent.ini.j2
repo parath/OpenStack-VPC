@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+[linux_bridge]
+physical_interface_mappings = {{ neutron_plugins[neutron_plugin_type].network_mappings }}
+
+[vxlan]
+enable_vxlan = True
+local_ip = {{ hostvars[inventory_hostname]['ansible_br_tunnel']['ipv4']['address'] }}
+l2_population = {{ neutron_plugins[neutron_plugin_type].l2_population }}
+
+[securitygroup]
+enable_security_group = True
+firewall_driver = {{ neutron_plugins[neutron_plugin_type].driver_firewall }}

@@ -1,0 +1,35 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create keystone database
+  mysql_db:
+    name: "{{ keystone_db_name }}"
+    state: present
+    login_host: "{{ groups['galera'][0] }}"
+    login_user: root
+    login_password: alca511
+  tags:
+    - keystone-db-setup
+
+- name: Create keystone db user
+  mysql_user:
+    user: "{{ keystone_db_user }}"
+    host: "{{ item }}"
+    password: "{{ keystone_db_pass }}"
+    priv: "{{ keystone_db_name }}.*:ALL"
+    login_host: "{{ groups['galera'][0] }}"
+    login_user: root
+    login_password: alca511
+  with_items:
+    - "localhost"
+    - "%"
+  tags:
+    - keystone-db-setup
+
+- name: Populate the Identity service database
+  command: keystone-manage db_sync
+  sudo: yes
+  sudo_user: "{{ keystone_system_user_name }}"
+  ignore_errors: yes
+  tags:
+    - keystone-setup

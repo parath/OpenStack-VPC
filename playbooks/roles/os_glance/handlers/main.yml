@@ -1,0 +1,9 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Glance services restart
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items: "{{ glance_service_names }}"

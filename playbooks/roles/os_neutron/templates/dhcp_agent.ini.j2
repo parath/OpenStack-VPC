@@ -1,0 +1,7 @@
+[DEFAULT]
+# Drivers
+interface_driver = {{ neutron_plugins[neutron_plugin_type].driver_interface }}
+dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
+
+# Metadata
+enable_isolated_metadata = True

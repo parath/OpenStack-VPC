@@ -1,0 +1,11 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install Glance packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ glance_yum_packages }}"
+  tags:
+    - glance-install
+    - glance-ceph

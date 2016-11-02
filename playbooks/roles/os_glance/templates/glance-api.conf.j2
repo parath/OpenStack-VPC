@@ -1,0 +1,56 @@
+# {{ ansible_managed }}
+
+[DEFAULT]
+
+# Binds
+bind_host = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+registry_host = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+# Deploy the v1 OpenStack Images API. (boolean value)
+enable_v1_api = true
+
+# Deploy the v2 OpenStack Images API. (boolean value)
+enable_v2_api = true
+
+# Deploy the v1 OpenStack Registry API. (boolean value)
+enable_v1_registry = true
+
+# Deploy the v2 OpenStack Registry API. (boolean value)
+enable_v2_registry = true
+
+enable_v1_api = true
+enable_v1_registry = true
+
+{% if glance_default_store == "rbd" %}
+# Ceph CoW
+show_image_direct_url = True
+{% endif %}
+
+[database]
+connection = mysql+pymysql://{{ glance_db_user }}:{{ glance_db_pass }}@{{ internal_vip }}/{{ glance_db_name }}
+
+[keystone_authtoken]
+auth_uri = http://{{ internal_vip }}:5000
+auth_url = http://{{ internal_vip }}:35357
+memcached_servers = {{ memcached_servers }}
+auth_type = password
+project_domain_name = {{ glance_service_project_domain_id }}
+user_domain_name = {{ glance_service_user_domain_id }}
+project_name = {{ glance_service_project_name }}
+username = {{ glance_service_user_name }}
+password = {{ glance_service_user_pass }}
+
+[paste_deploy]
+flavor = keystone
+
+[glance_store]
+stores = {{ glance_store }}
+default_store = {{ glance_default_store }}
+{% if glance_default_store == "file" %}
+filesystem_store_datadir = /var/lib/glance/images/
+{% endif %}
+{% if glance_default_store == "rbd" %}
+rbd_store_pool = {{ ceph_glance_pool }}
+rbd_store_user = {{ ceph_glance_user }}
+rbd_store_ceph_conf = /etc/ceph/ceph.conf
+rbd_store_chunk_size = 8
+{% endif %}

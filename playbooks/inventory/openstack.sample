@@ -1,0 +1,75 @@
+# Copyright 2016, Stackmasters.eu
+
+# Openstack playbooks sample inventory file. This is a an  incomplete template.
+
+# Define your hosts
+control1 ansible_ssh_host=
+control2 ansible_ssh_host=
+control3 ansible_ssh_host=
+
+compute1 ansible_ssh_host=
+compute2 ansible_ssh_host=
+compute3 ansible_ssh_host=
+
+storage1 ansible_ssh_host=
+storage2 ansible_ssh_host=
+storage3 ansible_ssh_host=
+
+haproxy1 ansible_ssh_host=
+
+# Define main groups
+[controllers]
+control1
+control2
+control3
+
+[compute]
+compute1
+compute2
+compute3
+
+[storage]
+storage1
+storage2
+storage3
+
+[haproxy]
+haproxy1
+
+# Innventory schema
+[galera:children]
+controllers
+
+[rabbitmq:children]
+controllers
+
+[memcached:children]
+controllers
+
+[cinder:children]
+cinder_control
+cinder_volume
+
+[nova:children]
+nova_control
+nova_compute
+
+[neutron:children]
+neutron_control
+neutron_compute
+neutron_network
+
+[neutron_network]
+control1
+
+[nova_control:children]
+controllers
+[neutron_control:children]
+controllers
+[cinder_control:children]
+controllers
+
+[nova_compute:children]
+compute
+[cinder_volume:children]
+storage

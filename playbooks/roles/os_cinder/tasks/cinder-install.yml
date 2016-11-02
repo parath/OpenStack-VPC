@@ -1,0 +1,21 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install Cinder packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ cinder_yum_packages }}"
+  tags:
+    - cinder-control-install
+    - cinder-storage-install
+
+- name: Install Cinder storage packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ cinder_yum_volume_packages }}"
+  when:
+    - "inventory_hostname in groups['cinder_volume']"
+  tags:
+    - cinder-storage-install

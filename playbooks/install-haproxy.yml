@@ -1,0 +1,9 @@
+---
+# Copyright 2015, Stackmasters.eu
+
+- name: Install HAProxy
+  hosts: haproxy
+  user: root
+  become: yes
+  roles:
+    - haproxy

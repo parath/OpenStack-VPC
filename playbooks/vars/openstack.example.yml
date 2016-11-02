@@ -1,0 +1,98 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+##########################
+# Shared Infra Variables #
+##########################
+
+# HAProxy VIP
+internal_vip:
+external_vip:
+
+# Galera
+galera_root_pass:
+
+## Memcached
+memcached_port: 11211
+memcached_servers: "{% for host in groups['controllers'] %}{{ hostvars[host]['ansible_br_mgmt']['ipv4']['address'] }}:{{ memcached_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+
+## RabbitMQ
+rabbitmq_port: 5672
+rabbitmq_hosts: "{% for host in groups['controllers'] %}{{ hostvars[host]['ansible_br_mgmt']['ipv4']['address'] }}:{{ rabbitmq_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+# Name of the rabbitmq cluster
+rabbitmq_cluster_name: openstack
+
+# Erlang authentication cookie, should be automaticaly generated
+rabbitmq_cookie_token: 
+
+#######################
+# Openstack Variables #
+#######################
+
+# Keystone
+keystone_admin_user: admin
+keystone_admin_user_password: 
+keystone_admin_role: admin
+
+## Neutron
+# Neutron service details
+neutron_service_region: RegionOne
+neutron_service_user_name: neutron
+neutron_service_user_pass: 
+neutron_service_role_name: "admin"
+neutron_service_project_domain_id: default
+neutron_service_user_domain_id: default
+neutron_service_project_name: "service"
+neutron_metadata_agent_secret: 
+
+## Nova
+nova_service_name: nova
+nova_service_region: RegionOne
+nova_service_project_name: "service"
+nova_service_project_domain_id: default
+nova_service_user_domain_id: default
+nova_service_user_name: "nova"
+nova_service_user_pass: 
+nova_service_role_name: "admin"
+
+
+## Glance
+# Glance Database details
+glance_db_name: glance
+glance_db_pass: 
+glance_db_user: glance
+
+# Glance system details
+glance_system_user: glance
+glance_system_group: glance
+
+# Glance service details
+glance_service_user_name: glance
+glance_service_user_pass: 
+glance_service_role_name: "admin"
+glance_service_project_domain_id: default
+glance_service_user_domain_id: default
+glance_service_project_name: service
+glance_service_region: RegionOne
+
+# Glance RabbitMQ info
+glance_rabbitmq_userid: glance
+glance_rabbitmq_pass: 
+glance_rabbitmq_vhost: /glance
+
+# Glance store
+glance_default_store: rbd
+glance_store: rbd
+
+## Ceph
+ceph_uuid: 0c71259f-2cc2-415f-8f4c-416aef2d85f3
+ceph_mons: "{% for host in groups['mons'] %}{{ hostvars[host]['ansible_br_mgmt']['ipv4']['address'] }}{% if not loop.last %},{% endif %}{% endfor %}"
+
+# Glance Ceph properties
+glance_ceph_pool: images
+glance_ceph_client: glance
+
+# Cinder ceph
+cinder_ceph_client: cinder
+cinder_ceph_pool: volumes
+

@@ -5,6 +5,8 @@ OpenStack core services
  - nova
  - glance
  - neutron
+ - heat
+ - cinder
  
 OpenStack optional services
  - horizon

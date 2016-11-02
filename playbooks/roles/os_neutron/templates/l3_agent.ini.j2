@@ -1,0 +1,7 @@
+[DEFAULT]
+
+interface_driver = {{ neutron_plugins[neutron_plugin_type].driver_interface }}
+external_network_bridge =
+agent_mode = {% if neutron_dvr  %}{% if inventory_hostname in groups['nova_compute'] %} dvr {% else %} dvr_snat{%endif%} {% else %} {% if inventory_hostname not in groups['nova_compute'] %}legacy {%endif%}{% endif %}
+
+enable_metadata_proxy = True

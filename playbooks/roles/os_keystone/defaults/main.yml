@@ -1,0 +1,63 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+# Keystone database details
+keystone_db_name: keystone
+keystone_db_user: keystone
+keystone_db_pass: "!keystonedbpass!"
+
+keystone_admin_listen_ip: "{{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}"
+keystone_service_listen_ip: "{{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}"
+
+# Keystone environment variables
+keystone_admin_token: "keystone_token"
+keystone_os_host: "{{ hostvars[groups['keystone'][0]]['ansible_br_mgmt']['ipv4']['address'] }}"
+keystone_os_url: "http://{{ keystone_os_host }}:35357/v3"
+keystone_os_identity_api_version: 3
+
+
+# Keystone common support packges
+keystone_support_packages:
+  - httpd
+  - mod_wsgi
+  - MySQL-python
+  - python-pip
+
+keystone_pip_packages:
+  - shade
+
+# Keystone packages
+keystone_yum_packages:
+  - openstack-keystone
+
+keystone_wsgi_public_ps_number: 4
+keystone_wsgi_admin_ps_number: 4
+
+## System info
+keystone_system_user_name: keystone
+keystone_system_group_name: keystone
+
+keystone_service_name: keystone
+keystone_service_region: RegionOne
+keystone_service_project_domain_id: default
+
+#Keystone projects
+keystone_admin_project: admin
+keystone_service_project: service
+keystone_demo_project: demo
+
+#Keystone admin user
+keystone_admin_user: admin
+keystone_admin_user_password: admin
+keystone_admin_role: admin
+
+#Keystone demo user
+keystone_demo_user: demo
+keystone_demo_password: demo
+keystone_user_role: user
+
+#
+keystone_token_provider: fernet
+# Cache 
+keystone_cache_enabled: false
+keystone_cache_backend_argument: "url:{% for host in groups['memcached'] %}{{ hostvars[host]['ansible_br_mgmt']['ipv4']['address'] }}{% if not loop.last %},{% endif %}{% endfor %}:{{ memcached_port }}"

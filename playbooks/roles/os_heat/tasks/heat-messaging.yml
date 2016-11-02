@@ -1,0 +1,25 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Ensure Rabbitmq vhost
+  rabbitmq_vhost:
+    name: "{{ heat_rabbitmq_vhost }}"
+    state: "present"
+  delegate_to: "{{ groups['rabbitmq'][0] }}"
+  tags:
+    - heat-rabbitmq
+    - heat-rabbitmq-vhost
+
+- name: Ensure rabbitmq user
+  rabbitmq_user:
+    user: "{{ heat_rabbitmq_user }}"
+    password: "{{ heat_rabbitmq_pass }}"
+    vhost: "{{ heat_rabbitmq_vhost }}"
+    configure_priv: ".*"
+    read_priv: ".*"
+    write_priv: ".*"
+    state: "present"
+  delegate_to: "{{ groups['rabbitmq'][0] }}"
+  tags:
+    - heat-rabbitmq
+    - heat-rabbitmq-user

@@ -1,0 +1,70 @@
+# {{ ansible_managed }}
+
+[DEFAULT]
+rpc_backend = rabbit
+my_ip = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+osapi_volume_listen = $my_ip
+glance_api_servers = http://{{ internal_vip }}:9292
+{% if ceph_mons is defined %}
+
+# Cinder Backend
+enabled_backends = ceph
+
+# Backups
+backup_driver = cinder.backup.drivers.ceph
+backup_ceph_conf=/etc/ceph/ceph.conf
+backup_ceph_user = {{ cinder_backup_ceph_client }}
+backup_ceph_chunk_size = 134217728
+backup_ceph_pool = {{ cinder_backup_ceph_pool }}
+backup_ceph_stripe_unit = 0
+backup_ceph_stripe_count = 0
+{% else %}
+enabled_backends = lvm
+{% endif %}
+
+[database]
+connection = mysql+pymysql://{{ cinder_db_user }}:{{ cinder_db_pass }}@{{ internal_vip }}/{{ cinder_db_name }}
+
+
+[oslo_concurrency]
+lock_path = /var/lib/cinder/tmp
+
+
+[oslo_messaging_rabbit]
+rabbit_hosts = {{ rabbitmq_hosts }}
+rabbit_userid = {{ cinder_rabbitmq_userid }}
+rabbit_password = {{ cinder_rabbitmq_pass }}
+rabbit_virtual_host = {{ cinder_rabbitmq_vhost }}
+
+[keystone_authtoken]
+auth_uri = http://{{ internal_vip }}:5000
+auth_url = http://{{ internal_vip }}:35357
+memcached_servers = {{ memcached_servers }}
+auth_type = password
+project_domain_name = {{ cinder_service_project_domain_id }}
+user_domain_name = {{ cinder_service_user_domain_id }}
+project_name = {{ cinder_service_project_name }}
+username = {{ cinder_service_user_name }}
+password = {{ cinder_service_user_pass }}
+
+
+{% if ceph_mons is defined %}
+[ceph]
+rbd_user = {{ cinder_ceph_client }}
+rbd_secret_uuid = {{ cinder_ceph_uuid }}
+volume_driver = cinder.volume.drivers.rbd.RBDDriver
+rbd_pool = {{ cinder_ceph_pool }}
+rbd_ceph_conf = /etc/ceph/ceph.conf
+rbd_flatten_volume_from_snapshot = false
+rbd_max_clone_depth = 5
+rbd_store_chunk_size = 4
+rados_connect_timeout = -1
+glance_api_version = 2
+
+{% else %}
+[lvm]
+volume_driver = cinder.volume.drivers.lvm.LVMVolumeDriver
+volume_group = cinder-volumes
+iscsi_protocol = iscsi
+iscsi_helper = lioadm
+{% endif %}

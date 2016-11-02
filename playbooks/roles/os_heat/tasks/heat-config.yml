@@ -1,0 +1,16 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Drop heat config
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/heat/{{ item }}"
+    owner: "{{ heat_system_user }}"
+    group: "{{ heat_system_group }}"
+    mode: 0644
+  with_items:
+    - heat.conf
+  notify: Heat services restart
+  tags:
+    - heat-config
+    - heat-setup

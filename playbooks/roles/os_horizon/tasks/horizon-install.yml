@@ -1,0 +1,11 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install horizoon
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "{{ horizon_yum_packages }}"
+  tags:
+    - horizon-compute-setup

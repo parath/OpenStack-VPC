@@ -1,0 +1,23 @@
+[DEFAULT]
+
+admin_token = {{ keystone_admin_token }}
+
+[database]
+
+connection =  mysql+pymysql://{{ keystone_db_user }}:{{ keystone_db_pass }}@{{ internal_vip }}/{{ keystone_db_name }}
+[token]
+{% if keystone_cache_enabled and 'fernet' not in keystone_token_provider %}
+caching = true
+{%endif%}
+provider = {{ keystone_token_provider }}
+
+[eventlet_server]
+admin_bind_host = {{ keystone_admin_listen_ip }}
+service_bind_host = {{ keystone_service_listen_ip }}
+
+{% if keystone_cache_enabled and 'fernet' not in keystone_token_provider %}
+[cache]
+enlabled = {{ keystone_cache_enabled }}
+backend = dogpile.cache.memcached
+backend_argument = {{ keystone_cache_backend_argument }}
+{%endif%}

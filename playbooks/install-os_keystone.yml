@@ -1,0 +1,8 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install Openstack Keystone
+  hosts: keystone
+  user: root
+  roles:
+    - os_keystone

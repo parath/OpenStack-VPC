@@ -1,0 +1,41 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create Cinder database
+  mysql_db:
+    name: "{{item}}"
+    state: present
+    login_host: "{{ groups['galera'][0] }}"
+    login_user: root
+    login_password: "{{ galera_root_pass }}"
+  with_items:
+    - "{{ cinder_db_name }}"
+  tags:
+    - cinder-db-setup
+
+- name: Create Cinder db user
+  mysql_user:
+    state: present
+    name: "{{ cinder_db_user }}"
+    host: "{{ item }}"
+    priv: "{{ cinder_db_name }}.*:ALL"
+    password: "{{ cinder_db_pass }}"
+    login_host: "{{ groups['galera'][0] }}"
+    login_user: root
+    login_password: "{{ galera_root_pass }}"
+  with_items:
+    - "localhost"
+    - "%"
+  tags:
+    - cinder-db-setup
+
+
+- name: Perform a Cinder DB sync
+  command: cinder-manage db sync
+  sudo: yes
+  sudo_user: "{{ cinder_system_user }}"
+  with_items:
+    - "{{  cinder_db_name }}"
+  tags:
+    - cinder-db-setup
+    - cinder-setup

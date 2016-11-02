@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+[ml2]
+type_drivers = {{ neutron_plugins[neutron_plugin_type].drivers_type }}
+tenant_network_types = vxlan
+mechanism_drivers = {{ neutron_plugins[neutron_plugin_type].mechanisms }}
+extension_drivers = port_security
+
+[ml2_type_flat]
+flat_networks = flat
+
+[ml2_type_vxlan]
+vni_ranges = 1:1000
+
+[securitygroup]
+enable_ipset = True

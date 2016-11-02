@@ -1,0 +1,19 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install support packages
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "{{ nova_support_packages }}"
+  tags:
+    - nova-support-packages
+
+- include: nova-ssh-keys.yml
+  tags:
+    - nova-compute-setup
+
+- include: nova-ssh-keys-populate.yml
+  tags:
+    - nova-compute-setup

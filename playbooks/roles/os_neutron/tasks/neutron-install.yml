@@ -1,0 +1,18 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install neutron control plane packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{  neutron_control_plane_yum_packages }}"
+  when:
+    - "inventory_hostname in groups['neutron_control']"
+
+- name: Install neutron compute packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{  neutron_agents_yum_packages }}"
+  when:
+    - "inventory_hostname in groups['neutron_agents']"

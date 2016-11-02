@@ -1,0 +1,31 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- include: nova-pre-install.yml
+- include: nova-messaging.yml
+  when:
+    - inventory_hostname == groups['nova_control'][1]
+
+- include: nova-service-create.yml
+  when:
+    - inventory_hostname == groups['nova_control'][1]
+
+- include: nova-install-control-plane.yml
+  when:
+    - inventory_hostname in groups['nova_control']
+
+- include: nova-compute.yml
+  when:
+    - inventory_hostname in groups['nova_compute']
+
+- include: nova-configuration.yml
+
+- include: nova-database.yml
+  when:
+    - inventory_hostname == groups['nova_control'][1]
+
+- include: nova-kvm-ceph.yml
+  when:
+    - ceph_mons is defined
+
+- include: nova-restart.yml

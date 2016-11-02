@@ -1,0 +1,41 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create heat database
+  mysql_db:
+    name: "{{item}}"
+    state: present
+    login_host: "{{ groups['galera'][0] }}"
+    login_user: root
+    login_password: "{{ galera_root_pass }}"
+  with_items:
+    - "{{ heat_db_name }}"
+  tags:
+    - heat-db-setup
+
+- name: Create heat db user
+  mysql_user:
+    state: present
+    name: "{{ heat_db_user }}"
+    host: "{{ item }}"
+    priv: "{{ heat_db_name }}.*:ALL"
+    password: "{{ heat_db_pass }}"
+    login_host: "{{ groups['galera'][0] }}"
+    login_user: root
+    login_password: "{{ galera_root_pass }}"
+  with_items:
+    - "localhost"
+    - "%"
+  tags:
+    - heat-db-setup
+
+
+- name: Perform a heat DB sync
+  command: heat-manage db_sync
+  sudo: yes
+  sudo_user: "{{ heat_system_user }}"
+  with_items:
+    - "{{  heat_db_name }}"
+  tags:
+    - heat-db-setup
+    - heat-setup

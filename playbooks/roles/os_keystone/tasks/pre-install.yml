@@ -1,0 +1,20 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install support packages
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "{{ keystone_support_packages }}"
+  tags:
+    - keystone-support-packages
+
+- name: Install support packages
+  pip:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "{{ keystone_pip_packages }}"
+  tags:
+    - keystone-support-packages
