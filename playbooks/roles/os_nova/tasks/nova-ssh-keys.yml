@@ -23,17 +23,17 @@
     group: "{{ nova_system_group }}"
     mode: 0755
 
-#- name: Check for nova ssh keys
-#  shell: stat /var/lib/nova/.ssh/id_rsa
-#  register: nova_key_exists
+- name: Check for nova ssh keys
+  shell: ls -l /var/lib/nova/.ssh/id_rsa
+  register: nova_key_exists
 
 
-#- name: Generate nova ssh keys
-#  shell: ssh-keygen -b 2048 -t rsa -f /var/lib/nova/.ssh/id_rsa -q -N ""
-#  args:
-#    creates: /var/lib/nova/id_rsa
-#   when:
-#     - nova_key_exists
+- name: Generate nova ssh keys
+  shell: ssh-keygen -b 2048 -t rsa -f /var/lib/nova/.ssh/id_rsa -q -N ""
+  args:
+    creates: /var/lib/nova/id_rsa
+  when:
+    - nova_key_exists.stdout_lines == 0
 
 - name: Create the nova SSH config file
   copy:

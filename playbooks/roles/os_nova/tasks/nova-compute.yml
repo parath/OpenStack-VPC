@@ -9,3 +9,11 @@
     - "{{ nova_compute_yum_packages }}"
   tags:
     - nova-compute-setup
+
+- include: nova-ssh-keys.yml
+  tags:
+    - nova-compute-setup
+
+- include: nova-ssh-keys-populate.yml
+  tags:
+    - nova-compute-setup

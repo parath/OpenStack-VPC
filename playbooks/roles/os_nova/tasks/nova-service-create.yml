@@ -25,7 +25,7 @@
     - nova-service-user-role
 
 - name: Check if Nova service is present
-  shell: openstack service list
+  shell: source /root/openrc && openstack service list
   register: nova_service
   tags:
     - nova-service
@@ -40,7 +40,7 @@
     - nova-service-entity
 
 - name: Check if Nova endpoints are present
-  shell: openstack endpoint list
+  shell: source /root/openrc && openstack endpoint list
   register: nova_endpoint
   tags:
     - nova-service

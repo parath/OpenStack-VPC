@@ -4,11 +4,11 @@
 - include: nova-pre-install.yml
 - include: nova-messaging.yml
   when:
-    - inventory_hostname == groups['nova_control'][1]
+    - inventory_hostname == groups['nova_control'][0]
 
 - include: nova-service-create.yml
   when:
-    - inventory_hostname == groups['nova_control'][1]
+    - inventory_hostname == groups['nova_control'][0]
 
 - include: nova-install-control-plane.yml
   when:
@@ -22,7 +22,7 @@
 
 - include: nova-database.yml
   when:
-    - inventory_hostname == groups['nova_control'][1]
+    - inventory_hostname == groups['nova_control'][0]
 
 - include: nova-kvm-ceph.yml
   when:

@@ -5,6 +5,6 @@
   authorized_key:
     user: "{{ nova_system_user }}"
     key: "{{ hostvars[item]['nova_pubkey'] }}"
-  with_items: groups['nova_compute']
+  with_items: "{{ groups['nova_compute'] }}"
   tags:
     - nova-key
