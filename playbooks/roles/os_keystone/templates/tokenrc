@@ -1,0 +1,4 @@
+export OS_TOKEN={{ keystone_admin_token }}
+export OS_URL={{ keystone_os_url }}
+export OS_IDENTITY_API_VERSION={{ keystone_os_identity_api_version }}
+export OS_USER_DOMAIN_NAME=default

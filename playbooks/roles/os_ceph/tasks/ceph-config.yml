@@ -1,0 +1,22 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create /etc/ceph
+  file:
+    state: directory
+    path: /etc/ceph
+    owner: ceph
+    group: ceph
+    mode: 0755
+  tags:
+    - ceph-config
+
+- name: Drop Ceph config
+  template:
+    src: ceph.conf.j2
+    dest: /etc/ceph/ceph.conf
+    owner: ceph
+    group: ceph
+    mode: 0644
+  tags:
+    - ceph-config

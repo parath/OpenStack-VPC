@@ -1,0 +1,8 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Setup ceph cluster
+  hosts: ceph
+  user: root
+  roles:
+    - os_ceph

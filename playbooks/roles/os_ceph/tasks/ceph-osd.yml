@@ -1,0 +1,26 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Export client.bootstrap-osd
+  shell: ceph auth get-or-create client.bootstrap-osd > /var/lib/ceph/bootstrap-osd/ceph.keyring
+  args:
+    creates: /var/lib/ceph/bootstrap-osd/ceph.keyring
+  tags:
+    - ceph-osd
+    - ceph-osd-prepare
+
+- name: Prepare osd
+  shell: ceph-disk prepare --cluster {{ ceph_cluster_name }} --cluster-uuid {{ ceph_uuid }} --fs-type xfs {{ item }}
+  with_items:
+    - "{{ ceph_osd_map[inventory_hostname] }}"
+  tags:
+    - ceph-osd
+    - ceph-osd-prepare
+
+- name: Activate osd
+  shell: ceph-disk activate {{ item }}
+  with_items:
+    - "{{ ceph_osd_map[inventory_hostname] }}"
+  tags:
+    - ceph-osd
+    - ceph-osd-activate

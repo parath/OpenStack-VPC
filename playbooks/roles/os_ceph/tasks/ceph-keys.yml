@@ -1,0 +1,86 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create ceph keyrings
+  command: ceph-authtool --create-keyring /tmp/ceph.mon.keyring --gen-key -n mon. --cap mon 'allow *'
+  args:
+    creates: /tmp/ceph.mon.keyring
+  when: inventory_hostname == groups['mons'][0]
+  tags:
+    - ceph-keys
+
+- name: Create ceph admin keyrings
+  shell: ceph-authtool --create-keyring /etc/ceph/ceph.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow'
+  args:
+    creates: /etc/ceph/ceph.client.admin.keyring
+  when: inventory_hostname == groups['mons'][0]
+  tags:
+    - ceph-keys
+
+- name: Add ceph admin keyring to mon keyring
+  shell: ceph-authtool /tmp/ceph.mon.keyring --import-keyring /etc/ceph/ceph.client.admin.keyring
+  when: inventory_hostname == groups['mons'][0]
+  tags:
+    - ceph-keys
+
+- name: Create omap
+  shell: "monmaptool --create {% for host in groups['mons'] %} --add {{ host }} {{ hostvars[host]['ansible_br_storage']['ipv4']['address'] }}:6789 {% endfor %} --fsid {{ ceph_uuid }} /tmp/monmap"
+  args:
+    creates: /tmp/monmap
+  when: inventory_hostname == groups['mons'][0]
+  tags:
+    - ceph-keys
+
+- name: Fetch keyrings and monmap from node1
+  fetch:
+    src: "{{ item }}"
+    dest: /tmp/ceph-keys/
+    fail_on_missing: no
+  with_items:
+    - /etc/ceph/ceph.client.admin.keyring
+    - /tmp/ceph.mon.keyring
+    - /tmp/monmap
+  when: inventory_hostname == groups['mons'][0]
+  tags:
+    - ceph-keyrings
+
+- name: Drop keyrings on all other nodes
+  copy:
+    src: "/tmp/ceph-keys/{{ groups['mons'][0] }}/{{ item }}"
+    dest: "{{ item }}"
+    directory_mode: yes
+  when: inventory_hostname != groups['mons'][0]
+  with_items:
+    - /etc/ceph/ceph.client.admin.keyring
+    - /tmp/ceph.mon.keyring
+    - /tmp/monmap
+  tags:
+    - keystone-fernet
+
+- name: Add ceph keyring to admin keyring
+  shell: ceph-mon --mkfs -i {{ ansible_hostname }} --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
+  tags:
+    - ceph-keys
+
+- name: Create monitor dir
+  file:
+    state: directory
+    path: /var/lib/ceph/mon/{{ ceph_cluster_name }}-{{ inventory_hostname }}
+  tags:
+    - ceph-keys
+
+- name: Create done file
+  file:
+    state: touch
+    path: /var/lib/ceph/mon/{{ ceph_cluster_name }}-{{ inventory_hostname }}/{{ item }}
+  with_items:
+    - done
+    - sysvinit
+  tags:
+    - ceph-keys
+
+- name: Start ceph monitor
+  command: /etc/init.d/ceph start mon.{{ inventory_hostname }}
+  tags:
+    - ceph-keys
+

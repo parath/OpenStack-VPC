@@ -1,2 +1,24 @@
 ---
 # Copyright 2016, Stackmasters.eu
+
+## Ceph
+ceph_uuid: 0c71259f-2cc2-415f-8f4c-416aef2d85f3
+
+ceph_mons: "{% for host in groups['mons'] %}{{ hostvars[host]['ansible_br_storage']['ipv4']['address'] }}{% if not loop.last %},{% endif %}{% endfor %}"
+
+ceph_yum_packages:
+  - ceph
+
+ceph_cluster_name: ceph
+ceph_public_net: 192.168.130.0/24
+ceph_repl_net: 192.168.210.0/24
+
+# Define osd for each hosts
+# Use devices, partitions or directories
+ceph_osd_map:
+  openstack01:
+    - /ceph
+  openstack02:
+    - /ceph
+  openstack03:
+    - /ceph

@@ -1,0 +1,23 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: create user group ceph
+  group:
+    name: 'ceph'
+  tags:
+    - ceph-setup
+
+- name: create user ceph
+  user:
+    name: 'ceph'
+  tags:
+    - ceph-setup
+
+- name: Install Ceph on all nodes
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "{{ ceph_yum_packages }}"
+  tags:
+    - ceph-setup
