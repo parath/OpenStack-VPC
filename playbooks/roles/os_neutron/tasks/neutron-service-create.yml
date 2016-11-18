@@ -36,7 +36,7 @@
     - neutron-service
 
 - name: Check if Neutron endpoints are present
-  shell: openstack endpoint list
+  shell: source /root/openrc && openstack endpoint list
   register: neutron_endpoint
   tags:
     - neutron-service
