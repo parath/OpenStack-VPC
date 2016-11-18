@@ -3,7 +3,7 @@
 
 - include: install-os_keystone.yml
 - include: install-os_glance.yml
-- include: install-os_neutron.yml
 - include: install-os_nova.yml
+- include: install-os_neutron.yml
 - include: install-os_horizon.yml
 - include: install-os_cinder.yml
