@@ -1,0 +1,9 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- include: os-repo.yml
+- include: os-hosts-file.yml
+- include: os-support-packages.yml
+- include: os-drop-openrc.yml
+- include: os-config-ntp.yml
+- include: os-services.yml

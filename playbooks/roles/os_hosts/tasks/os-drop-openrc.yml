@@ -1,0 +1,12 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Drop openrc file
+  template:
+    src: openrc.j2
+    dest: /root/openrc
+    owner: root
+    group: root
+    mode: "0600"
+  tags:
+    - openstack-openrc-file

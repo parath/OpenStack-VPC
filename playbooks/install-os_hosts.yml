@@ -2,7 +2,7 @@
 # Copyright 2016, Stackmasters.eu
 
 - name: Openstack common tasks
-  hosts: all
+  hosts: controllers
   user: root
   roles:
-    - os_common
+    - os_hosts

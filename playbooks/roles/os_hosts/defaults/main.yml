@@ -12,3 +12,17 @@ openrc_os_auth_url: "{{ internal_vip }}"
 openrc_file_dest: /root/openrc"
 openrc_file_owner: root
 openrc_file_group: root
+
+os_support_packages:
+  - psmisc
+  - openvswitch
+  - chrony
+  - MySQL-python
+  - python-devel
+  - bridge-utils
+  - python-pip
+
+os_pip_packages:
+  - shade
+
+os_br_mgmt_subnet: "192.168.110.0/24"

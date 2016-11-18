@@ -6,5 +6,3 @@
 # Supports the following distros
  - Centos 6
  - Centos 7
- - Ubuntu 14.04
- - Ubuntu 16.04

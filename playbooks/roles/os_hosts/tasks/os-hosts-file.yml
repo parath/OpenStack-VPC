@@ -1,0 +1,32 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Update hosts file remove stale IP entries
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^{{ hostvars[item]['ansible_br_mgmt']['ipv4']['address'] }} (?!{{ item }}$)"
+    state: absent
+  with_items:
+    - "{{ groups['all'] }}"
+  tags:
+    - openstack-host-hostfile
+
+- name: Update hosts file remove stale Host entries
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "(?<!^{{ hostvars[item]['ansible_br_mgmt']['ipv4']['address'] }}) {{ item }}$"
+    state: absent
+  with_items:
+    - "{{ groups['all'] }}"
+  tags:
+    - openstack-host-hostfile
+
+- name: Update hosts file from ansible inventory
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item]['ansible_br_mgmt']['ipv4']['address'] }} {{ item }}"
+    state: present
+  with_items:
+    - "{{ groups['all'] }}"
+  tags:
+    - openstack-host-hostfile
