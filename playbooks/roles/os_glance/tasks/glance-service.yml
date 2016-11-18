@@ -9,7 +9,7 @@
     domain: "{{ glance_service_user_domain_id }}"
     default_project: "{{ glance_service_project_name }}"
     region_name: "{{ glance_service_region }}"
-    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }} user_domain_name=default project_domain_name=default
+    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
   tags:
     - glance-service
 
@@ -18,13 +18,13 @@
     user: "{{ glance_service_user_name }}"
     role: "{{ glance_service_role_name }}"
     project: "{{ glance_service_project_name }}"
-    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+    auth: auth_url=http://{{ internal_vip }}:35357/v3/ username=admin password={{ keystone_admin_user_password }}
   tags:
     - glance-service
 
 
 - name: Check if Glance service is present
-  shell: openstack service list
+  shell: source /root/openrc && openstack service list
   register: glance_service
   tags:
     - glance-service
@@ -37,7 +37,7 @@
     - glance-service
 
 - name: Check if glance endpoints are present
-  shell: openstack endpoint list
+  shell: source /root/openrc && openstack endpoint list
   register: glance_endpoint
   tags:
     - glance-service

@@ -6,8 +6,9 @@
 - include: glance-config.yml
 - include: glance-service.yml
   when:
-    - inventory_hostname == groups['controllers'][1]
+    - inventory_hostname == groups['controllers'][0]
 
 - include: glance-database.yml
   when:
-    - inventory_hostname == groups['controllers'][1]
+    - inventory_hostname == groups['controllers'][0]
+  notify: Glance services restart
