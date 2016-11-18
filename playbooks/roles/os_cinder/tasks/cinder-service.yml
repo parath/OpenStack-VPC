@@ -23,7 +23,7 @@
     - cinder-service
 
 - name: Check if cinder service is present
-  shell: openstack service list
+  shell: source /root/openrc && openstack service list
   register: cinder_service
   tags:
     - cinder-service
@@ -36,7 +36,7 @@
     - cinder-service
 
 - name: Check if cinder endpoints are present
-  shell: openstack endpoint list
+  shell: source /root/openrc && openstack endpoint list
   register: cinder_endpoint
   tags:
     - cinder-service
