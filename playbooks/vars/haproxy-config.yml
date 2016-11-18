@@ -1,0 +1,185 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+# A Virtual IP mostly used for HAProxy/keepalived installations
+external_vip: 10.10.110.99
+internal_vip: 192.168.110.200
+
+# Keepalived interfaces
+#interface: eth1
+
+# HAProxy ssl support
+haproxy_ssl: false
+
+# Interface for backend nodes
+haproxy_backend_interface: br_mgmt
+
+# HAProxy ssl Global options
+haproxy_ssl_options:
+  - "ssl-default-bind-options no-sslv3"
+  - "tune.ssl.default-dh-param 2048"
+  - "ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS"
+
+haproxy_backend_options:
+  - "forwardfor"
+  - "httpchk"
+  - "option http-server-close"
+
+haproxy_service_configs:
+  - service:
+      haproxy_service_name: galera
+      haproxy_backend_nodes: "{{ [groups['galera'][0]] }}"  # list expected
+      haproxy_backup_nodes: "{{ groups['galera'][1:] }}"
+      haproxy_port: 3306
+      haproxy_backend_port: 3306	
+      haproxy_check_port: 3306
+      haproxy_balance_type: tcp
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"
+  - service:
+      haproxy_service_name: glance-api
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 9292
+      haproxy_backend_port: 9292
+      haproxy_check_port: 9292
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"
+  - service:
+      haproxy_service_name: glance-registry
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 9191
+      haproxy_backend_port: 9191
+      haproxy_check_port: 9191
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"
+  - service:
+      haproxy_service_name: keystone-admin
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 35357
+      haproxy_backend_port: 35357
+      haproxy_check_port: 35357
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"
+  - service:
+      haproxy_service_name: keystone-service
+      haproxy_backup_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 5000
+      haproxy_backend_port: 5000
+      haproxy_check_port: 5000
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"
+  - service:
+      haproxy_service_name: neutron-server
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 9696
+      haproxy_backend_port: 9696
+      haproxy_check_port: 9696
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"
+  - service:
+      haproxy_service_name: nova-api
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 8774
+      haproxy_backend_port: 8774
+      haproxy_check_port: 8774
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"
+  - service:
+      haproxy_service_name: nova-api-metadata
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 8775
+      haproxy_backend_port: 8775
+      haproxy_check_port: 8775
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"
+  - service:
+      haproxy_service_name: nova-console
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 6080
+      haproxy_backend_port: 6080
+      haproxy_check_port: 6080
+      haproxy_balance_type: tcp
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: source
+      haproxy_bind: "{{ external_vip }}"
+  - service:
+      haproxy_service_name: horizon
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 80
+      haproxy_backend_port: 80
+      haproxy_check_port: 80
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: source
+      haproxy_bind: "{{ external_vip }}"
+  - service:
+      haproxy_service_name: cinder-api
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 8776
+      haproxy_backend_port: 8776
+      haproxy_check_port: 8776
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"
+  - service:
+      haproxy_service_name: heat-api
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 8004
+      haproxy_backend_port: 8004
+      haproxy_check_port: 8004
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"
+  - service:
+      haproxy_service_name: heat-cfn
+      haproxy_backend_nodes: "{{ groups['controllers'] }}"
+      haproxy_port: 8000
+      haproxy_backend_port: 8000
+      haproxy_check_port: 8000
+      haproxy_balance_type: http
+      haproxy_interval: 2s
+      haproxy_rise: 2
+      haproxy_fall: 5
+      haproxy_balance_alg: roundrobin
+      haproxy_bind: "{{ internal_vip }}"

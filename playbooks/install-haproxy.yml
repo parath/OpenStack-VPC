@@ -4,6 +4,7 @@
 - name: Install HAProxy
   hosts: haproxy
   user: root
-  become: yes
   roles:
     - haproxy
+  vars_files:
+    - vars/haproxy-config.yml
