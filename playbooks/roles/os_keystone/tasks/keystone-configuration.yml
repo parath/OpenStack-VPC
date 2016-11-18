@@ -24,6 +24,17 @@
    - keystone-config
    - keystone-apache-configuration
 
+- name: Search and replace Listen in httpd.conf
+  lineinfile:
+    dest: "/etc/httpd/conf/httpd.conf"
+    regexp: "^Listen 80"
+    line: "#Listen 80" 
+    state: present
+  notify: Restart apache
+  tags:
+   - keystone-config
+   - keystone-apache-configuration
+
 - name: Create wsgi-keystone.conf
   template:
     src: "wsgi-keystone.conf.j2"

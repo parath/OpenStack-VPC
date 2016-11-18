@@ -1,64 +1,43 @@
 ---
 # Copyright 2016, Stackmasters.eu
 
-- name: Create the service entity for keystone
-  shell: openstack service create \
-            --name {{ keystone_service_name }} \
-            --os-token {{ keystone_admin_token }} \
-            --os-url {{ keystone_os_url }} \
-            --os-identity-api-version {{ keystone_os_identity_api_version }} \
-            --description "OpenStack Identity" identity
+- name: Start Keystone service
+  service:
+    name: httpd
+    state: started
+    enabled: true
+  tags:
+    - keystone-config
+    - keystone-apache-configuration
 
-- name: Create keystone service API endpoints
-  shell: openstack endpoint create \
-            --region {{ keystone_service_region }} \
-            --os-token {{ keystone_admin_token }} \
-            --os-identity-api-version {{ keystone_os_identity_api_version }} \
-            --os-url {{ keystone_os_url }} identity {{ item }} http://{{ internal_vip }}:5000/v3
-  with_items:
-    - public
-    - internal
+- name: Bootstrap keystone admin and endpoint
+  command: |
+     /usr/bin/keystone-manage bootstrap \
+     --bootstrap-username {{ keystone_admin_user }} \
+     --bootstrap-password {{ keystone_admin_user_password }} \
+     --bootstrap-project-name {{ keystone_admin_project }} \
+     --bootstrap-role-name {{ keystone_admin_role }} \
+     --bootstrap-service-name {{ keystone_service_name }} \
+     --bootstrap-region-id {{ keystone_service_region }} \
+     --bootstrap-admin-url {{ keystone_os_url }} \
+     --bootstrap-public-url http://192.168.110.1:5000/v3 \
+     --bootstrap-internal-url http://192.168.110.1:5000/v3
+  become: yes
+  become_user: "{{ keystone_system_user_name }}"
+  changed_when: false
+  register: add_service
+  until: add_service|success
+  tags:
+    - keystone-bootstrap
 
-- name: Create keystone service API admin endpoint
-  shell: openstack endpoint create \
-            --region {{ keystone_service_region }} \
-            --os-token {{ keystone_admin_token }} \
-            --os-identity-api-version {{ keystone_os_identity_api_version }} \
-            --os-url {{ keystone_os_url }} identity admin http://{{ internal_vip }}:35357/v3
-
-- name: Create the default domain
-  shell: 'openstack domain create \
-            --os-token {{ keystone_admin_token }} --os-url {{ keystone_os_url }} \
-            --os-identity-api-version {{ keystone_os_identity_api_version }} \
-            --description "Default Domain" {{ keystone_service_project_domain_id }}'
-
-- name: Create the admin project
-  shell: openstack project create --domain default \
-           --os-identity-api-version {{ keystone_os_identity_api_version }} \
-           --os-token {{ keystone_admin_token }} --os-url {{ keystone_os_url }} \
-           --description "Admin Project" {{ keystone_admin_project }}
+- name: Check if Keystone service project is present
+  shell: source /root/openrc && openstack project list
+  register: service_project
+  tags:
+    - keystone-service
 
 - name: Create the service project
-  shell: openstack project create --domain default \
-           --os-identity-api-version {{ keystone_os_identity_api_version }} \
-           --os-token {{ keystone_admin_token }} --os-url {{ keystone_os_url }} \
-           --description "Service Project" {{ keystone_service_project }}
-
-- name: Create the admin user
-  shell: openstack user create --domain default \
-           --os-identity-api-version {{ keystone_os_identity_api_version }} \
-           --os-token {{ keystone_admin_token }} --os-url {{ keystone_os_url }} \
-           admin
-
-- name: Create admin role
-  shell: openstack role create \
-           --os-identity-api-version {{ keystone_os_identity_api_version }} \
-           --os-token {{ keystone_admin_token }} --os-url {{ keystone_os_url }} \
-           admin
-
-- name: Assign admin role to admin user
-  shell: openstack role add --project admin --user admin \
-            --os-token {{ keystone_admin_token }} \
-            --os-url {{ keystone_os_url }} \
-            --os-identity-api-version {{ keystone_os_identity_api_version }} \
-            admin
+  shell: source /root/openrc && openstack project create --description "Service Project" {{ keystone_service_project }}
+  when: "service_project.stdout.find('service') == -1"
+  tags:
+    - keystone-service

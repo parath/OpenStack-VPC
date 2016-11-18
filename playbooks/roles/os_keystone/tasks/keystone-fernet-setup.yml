@@ -5,13 +5,11 @@
   command: keystone-manage fernet_setup --keystone-user "{{ keystone_system_user_name }}" --keystone-group "{{ keystone_system_group_name }}"
   notify: Restart apache
   when: inventory_hostname == groups['keystone'][0]
-  tags:
-    - keystone-fernet
 
 - name: Fetch tokens from first host
   fetch:
     src: /etc/keystone/fernet-keys/{{ item }}
-    dest: /tmp/fernet-keys/{{ item }}
+    dest: /tmp/fernet-keys/
     fail_on_missing: no
   with_items:
     - 0
@@ -20,14 +18,25 @@
   tags:
     - keystone-fernet
 
+- name: Ensure fernet-keys dir exists
+  file:
+    state: directory
+    path: /etc/keystone/fernet-keys/
+  when: inventory_hostname != groups['keystone'][0]
+  tags:
+    - keystone-fernet
+
 - name: Drop tokens on all other hosts
   copy:
-    src: /tmp/fernet-keys
-    dest:  /etc/keystone/fernet-keys
+    src: /tmp/fernet-keys/{{ groups['keystone'][0] }}/etc/keystone/fernet-keys/{{ item }}
+    dest:  /etc/keystone/fernet-keys/{{ item }}
     directory_mode: yes
     owner: keystone
     group: keystone
     mode: 0600
   when: inventory_hostname != groups['keystone'][0]
+  with_items:
+    - 0
+    - 1
   tags:
     - keystone-fernet
