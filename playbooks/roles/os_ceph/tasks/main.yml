@@ -6,4 +6,3 @@
 - include: ceph-keys.yml
 - include: ceph-osd.yml
 - include: ceph-openstack.yml
-  when: inventory_hostname == groups['mons'][0]

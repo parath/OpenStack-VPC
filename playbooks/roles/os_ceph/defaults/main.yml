@@ -17,8 +17,13 @@ ceph_repl_net: 192.168.210.0/24
 # Use devices, partitions or directories
 ceph_osd_map:
   openstack01:
-    - /ceph
+    - /sda5
   openstack02:
-    - /ceph
+    - /sda5
   openstack03:
-    - /ceph
+    - /sda5
+
+ceph_openstack_keyrings:
+  - { key: "client.cinder", value: "mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=volumes, allow rwx pool=vms, allow rx pool=images'" }
+  - { key: "client.glance", value: "mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=images'" }
+  - { key: "client.cinder-backup", value: "mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=backups'" }

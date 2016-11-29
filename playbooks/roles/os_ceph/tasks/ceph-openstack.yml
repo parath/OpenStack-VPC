@@ -1,3 +1,29 @@
 ---
 # Copyright 2016, Stackmasters.eu
 
+- name: Create ceph openstack pools
+  command: ceph osd pool create {{ item }} 128
+  when: inventory_hostname == groups['mons'][0]
+  with_items:
+    - vms
+    - images
+    - volumes
+    - backups
+  when: inventory_hostname == groups['mons'][0]
+  tags:
+    - ceph-openstack
+
+
+- name: Create ceph openstack keyrings
+  shell: ceph auth get-or-create {{ item.key }} {{ item.value }}
+  when: inventory_hostname == groups['mons'][0]
+  with_items: "{{ ceph_openstack_keyrings }}"
+  when: inventory_hostname == groups['mons'][0]
+  tags:
+    - ceph-openstack
+
+- name: Export ceph openstack keyrings
+  shell: ceph auth get-or-create {{ item.key }} {{ item.value }} > /etc/ceph/ceph.{{ item.key }}.keyring
+  with_items: "{{ ceph_openstack_keyrings }}"
+  tags:
+    - ceph-openstack
