@@ -8,7 +8,7 @@ rpc_backend = rabbit
 auth_strategy = keystone
 dhcp_agents_per_network = {{ neutron_dhcp_agents_per_network }}
 {% if neutron_dvr  %}
-outer_distributed =  True
+router_distributed =  True
 {%endif%}
 
 # Binds

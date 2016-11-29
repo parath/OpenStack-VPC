@@ -87,39 +87,38 @@ neutron_rabbitmq_vhost: /neutron
 
 # Neutron services
 neutron_services:
- neutron-dhcp-agent:
-   group: neutron_control
-   service_name: neutron-dhcp-agent
-   service_en: True
-   service_conf: dhcp_agent.ini
-   service_group: neutron_agent
- neutron-openvswitch-agent:
-   group: neutron_agents
-   service_name: neutron-openvswitch-agent
-   service_en: "{{ neutron_plugin_type == 'ml2.ovs' }}"
-   service_conf: plugins/ml2/openvswitch_agent.ini
-   service_group: neutron_openvswitch_agent
- neutron-linuxbridge-agent:
-   group: neutron_agents
-   service_name: neutron-linuxbridge-agent
-   service_en: "{{ neutron_plugin_type == 'ml2.lxb' }}"
-   service_conf: plugins/ml2/linuxbridge_agent.ini
-   service_group: neutron_linuxbridge_agent
- neutron-metadata-agent:
-   group: neutron_control
-   service_name: neutron-metadata-agent
-   service_en: True
-   service_conf: metadata_agent.ini
-   service_group: neutron_agent
- neutron-server:
-   group: neutron_control
-   service_name: neutron-server
-   service_en: True
-   service_group: neutron_server
- neutron-l3-agent:
-   group: neutron_agents
-   service_name: neutron-l3-agent
-   service_en: True
-   service_conf: l3_agent.ini
-   service_group: neutron_server
-
+  neutron-dhcp-agent:
+    group: neutron_control
+    service_name: neutron-dhcp-agent
+    service_en: True
+    service_conf: dhcp_agent.ini
+    service_group: neutron_agent
+  neutron-openvswitch-agent:
+    group: neutron_agents
+    service_name: neutron-openvswitch-agent
+    service_en: "{{ neutron_plugin_type == 'ml2.ovs' }}"
+    service_conf: plugins/ml2/openvswitch_agent.ini
+    service_group: neutron_openvswitch_agent
+  neutron-linuxbridge-agent:
+    group: neutron_agents
+    service_name: neutron-linuxbridge-agent
+    service_en: "{{ neutron_plugin_type == 'ml2.lxb' }}"
+    service_conf: plugins/ml2/linuxbridge_agent.ini
+    service_group: neutron_linuxbridge_agent
+  neutron-metadata-agent:
+    group: neutron_control
+    service_name: neutron-metadata-agent
+    service_en: True
+    service_conf: metadata_agent.ini
+    service_group: neutron_agent
+  neutron-server:
+    group: neutron_control
+    service_name: neutron-server
+    service_en: True
+    service_group: neutron_server
+  neutron-l3-agent:
+    group: neutron_agents
+    service_name: neutron-l3-agent
+    service_en: True
+    service_conf: l3_agent.ini
+    service_group: neutron_server
