@@ -106,8 +106,8 @@
     - heat-service
 
 - name: Create heat_stack_owner role
-  shell: source /root/openrc && openstack role create {{ heat_stack_owner }}
-  when: "heat_role.stdout.find('{{ heat_stack_owner }}') == -1"
+  shell: source /root/openrc && openstack role create {{ heat_stack_owner_role }}
+  when: "heat_role.stdout.find('{{ heat_stack_owner_role }}') == -1"
   tags:
     - heat-service
 
@@ -118,7 +118,7 @@
     - heat-service
 
 - name: Create heat_stack_user role
-  shell: source /root/openrc && openstack role create {{ heat_stack_user }}
-  when: "heat_role.stdout.find('{{ heat_stack_user }}') == -1"
+  shell: source /root/openrc && openstack role create {{ heat_stack_user_role }}
+  when: "heat_role.stdout.find('{{ heat_stack_user_role }}') == -1"
   tags:
     - heat-service
