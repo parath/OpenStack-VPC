@@ -19,6 +19,9 @@
     - inventory_hostname in groups['nova_compute']
 
 - include: nova-configuration.yml
+- include: nova-libvirtd-config.yml
+  when:
+    - inventory_hostname in groups['nova_compute']
 
 - include: nova-database.yml
   when:

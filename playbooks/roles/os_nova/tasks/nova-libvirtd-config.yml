@@ -4,9 +4,10 @@
 - name: Enable listen option for libvirtd
   lineinfile:
     dest: "/etc/sysconfig/libvirtd"
-    regexp: '#LIBVIRTD_ARGS="--listen"'
+    regexp: '.?LIBVIRTD_ARGS="--listen"'
     line: 'LIBVIRTD_ARGS="--listen"'
     state: present
+  notify: Restart compute services
   tags:
    - nova-config
    - nova-libvirt-config
@@ -14,9 +15,24 @@
 - name: Enable tcp listen
   lineinfile:
     dest: "/etc/libvirt/libvirtd.conf"
-    regexp: '{{ item }}'
-    line: 'LIBVIRTD_ARGS="--listen"'
+    regexp: '.?{{ item }}'
+    line: '{{ item }}'
     state: present
+  with_items:
+    - listen_tls = 0
+    - listen_tcp = 1
+  notify: Restart compute services
+  tags:
+   - nova-config
+   - nova-libvirt-config
+
+- name: Disable auth_tcp
+  lineinfile:
+    dest: "/etc/libvirt/libvirtd.conf"
+    regexp: 'auth_tcp = "none"'
+    line: 'auth_tcp = "none"'
+    state: present
+  notify: Restart compute services
   tags:
    - nova-config
    - nova-libvirt-config
