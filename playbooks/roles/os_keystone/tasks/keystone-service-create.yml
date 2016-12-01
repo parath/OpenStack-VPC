@@ -20,8 +20,8 @@
      --bootstrap-service-name {{ keystone_service_name }} \
      --bootstrap-region-id {{ keystone_service_region }} \
      --bootstrap-admin-url {{ keystone_os_url }} \
-     --bootstrap-public-url http://192.168.110.1:5000/v3 \
-     --bootstrap-internal-url http://192.168.110.1:5000/v3
+     --bootstrap-public-url http://{{ external_vip }}:5000/v3 \
+     --bootstrap-internal-url http://{{ internal_vip }}:5000/v3
   become: yes
   become_user: "{{ keystone_system_user_name }}"
   changed_when: false
@@ -29,6 +29,7 @@
   until: add_service|success
   tags:
     - keystone-bootstrap
+    - keystone-service
 
 - name: Check if Keystone service project is present
   shell: source /root/openrc && openstack project list

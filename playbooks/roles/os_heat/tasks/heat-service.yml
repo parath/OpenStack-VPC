@@ -47,14 +47,15 @@
   register: heat_endpoint
   tags:
     - heat-service
+    - heat-endpoint
 
 - name: Create heat service endpoint
-  shell: source /root/openrc && openstack endpoint create --region {{ heat_service_region }} orchestration {{ item }} http://{{ internal_vip }}:8004/v1/%\(tenant_id\)s
+  shell: source /root/openrc && openstack endpoint create --region {{ heat_service_region }} orchestration {{ item.key }} http://{{ item.value }}:8004/v1/%\(tenant_id\)s
   when: "heat_endpoint.stdout.find('heat') == -1"
   with_items:
-    - "public"
-    - "internal"
-    - "admin"
+    - { key: "public", value: "{{ external_vip }}" }
+    - { key: "internal", value: "{{ internal_vip }}" }
+    - { key: "admin", value: "{{ internal_vip }}" }
   tags:
     - heat-service
     - heat-endpoint

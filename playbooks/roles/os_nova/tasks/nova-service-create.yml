@@ -48,12 +48,12 @@
 
 - name: Create nova service endpoint
   shell: source /root/openrc && openstack endpoint create --region {{ nova_service_region }} \
-         compute {{ item }} http://{{ internal_vip }}:8774/v2.1/%\(tenant_id\)s
+         compute {{ item.key }} http://{{ item.value }}:8774/v2.1/%\(tenant_id\)s
   when: "nova_endpoint.stdout.find('nova') == -1"
   with_items:
-    - "public"
-    - "internal"
-    - "admin"
+    - { key: "public", value: "{{ external_vip }}" }
+    - { key: "internal", value: "{{ internal_vip }}" }
+    - { key: "admin", value: "{{ internal_vip }}" }
   tags:
     - nova-service
     - nova-service-endpoint

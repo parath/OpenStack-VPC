@@ -43,12 +43,12 @@
 
 - name: Create cinder service endpoint
   shell: source /root/openrc && openstack endpoint create --region {{ cinder_service_region }} \
-         volumev2 {{ item }} http://{{ internal_vip }}:8776/v2/%\(tenant_id\)s
+         volumev2 {{ item.key }} http://{{ item.value }}:8776/v2/%\(tenant_id\)s
   when: "cinder_endpoint.stdout.find('cinder') == -1"
   with_items:
-    - "public"
-    - "internal"
-    - "admin"
+    - { key: "public", value: "{{ external_vip }}" }
+    - { key: "internal", value: "{{ internal_vip }}" }
+    - { key: "admin", value: "{{ internal_vip }}" }
   tags:
     - cinder-service
     - cinder-endpoint

@@ -40,15 +40,16 @@
   register: neutron_endpoint
   tags:
     - neutron-service
+    - neutron-endpoint
 
 - name: Create Neutron service endpoint
   shell: source /root/openrc && openstack endpoint create --region {{ neutron_service_region }} \
-         network {{ item }} http://{{ internal_vip }}:9696
+         network {{ item.key }} http://{{ item.value }}:9696
   when: "neutron_endpoint.stdout.find('neutron') == -1"
   with_items:
-    - "public"
-    - "internal"
-    - "admin"
+    - { key: "public", value: "{{ external_vip }}" }
+    - { key: "internal", value: "{{ internal_vip }}" }
+    - { key: "admin", value: "{{ internal_vip }}" }
   tags:
     - neutron-service
     - neutron-endpoint
