@@ -19,7 +19,7 @@
      --bootstrap-role-name {{ keystone_admin_role }} \
      --bootstrap-service-name {{ keystone_service_name }} \
      --bootstrap-region-id {{ keystone_service_region }} \
-     --bootstrap-admin-url {{ keystone_os_url }} \
+     --bootstrap-admin-url http://{{ external_vip }}:35357/v3 \
      --bootstrap-public-url http://{{ external_vip }}:5000/v3 \
      --bootstrap-internal-url http://{{ internal_vip }}:5000/v3
   become: yes
