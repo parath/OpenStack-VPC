@@ -6,6 +6,18 @@ service_plugins = router
 allow_overlapping_ips = True
 rpc_backend = rabbit
 auth_strategy = keystone
+
+# HA
+
+## L3
+{% if neutron_l3_ha|default false  %}
+l3_ha = {{ neutron_l3_ha|default false }}
+allow_automatic_l3agent_failover = True
+max_l3_agents_per_router = 2
+min_l3_agents_per_router = 1
+{%endif%}
+
+## DHCP
 dhcp_agents_per_network = {{ neutron_dhcp_agents_per_network }}
 {% if neutron_dvr  %}
 router_distributed =  True

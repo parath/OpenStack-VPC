@@ -20,8 +20,11 @@ neutron_service_user_domain_id: default
 neutron_service_project_name: "service"
 neutron_metadata_agent_secret: secret
 
-# Enable neutron dvr mode
+# Enable neutron DVR mode
 neutron_dvr: False
+
+# Enable Neutron l3 HA mode
+neutron_l3_ha: False
 
 # Neutron controller node packages
 neutron_control_plane_yum_packages:
