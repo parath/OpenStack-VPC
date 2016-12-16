@@ -1,0 +1,16 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+# Jenkins repo details
+jenkins_yum_repo: http://pkg.jenkins-ci.org/redhat/jenkins.repo
+jenkins_yum_repo_key: https://jenkins-ci.org/redhat/jenkins-ci.org.key
+
+# Jenkins common yum packages
+jenkins_common_yum_packges:
+  - java
+
+# Jenkins yum packages
+jenkins_yum_packages:
+  - jenkins
+
+

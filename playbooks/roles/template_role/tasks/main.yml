@@ -1,0 +1,7 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- include: role-pre-install.yml
+- include: role-install-centos.yml
+  when: "ansible_os_family == 'RedHat'"
+- include: role-post-install.yml
