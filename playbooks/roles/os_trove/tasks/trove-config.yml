@@ -1,0 +1,18 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Trove configuration
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/trove/{{ item }}"
+    mode: 0644
+    owner: "{{ trove_system_user }}"
+    group: "{{ trove_system_group }}"
+  with_items:
+    - trove.conf
+    - trove-conductor.conf
+    - trove-guestagent.conf
+    - trove-taskmanager.conf
+  notify: restart trove
+  tags:
+    - trove-config

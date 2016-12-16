@@ -1,0 +1,43 @@
+#{{ ansible_managed }}
+[DEFAULT]
+log_dir = /var/log/trove
+trove_auth_url = http://{{ internal_vip }}:5000/v2.0
+nova_compute_url = http://{{ internal_vip }}:8774/v2
+cinder_url = http://{{ internal_vip }}:8776/v1
+swift_url = http://{{ internal_vip }}:8080/v1/AUTH_
+notifier_queue_hostname = controller
+api_paste_config = /etc/trove/api-paste.ini
+
+# Binds
+bind_host = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+bind_port = 8779
+# Auth
+auth_strategy = keystone
+
+# RPC
+rpc_backend = rabbit
+
+# Config option for showing the IP address that nova doles out
+add_addresses = True
+network_label_regex = ^NETWORK_LABEL$
+
+[database]
+connection = mysql+pymysql://{{ trove_db_user }}:{{ trove_db_pass }}@{{ internal_vip }}/{{ trove_db_name }}
+
+[oslo_messaging_rabbit]
+rabbit_hosts = {{ rabbitmq_hosts }}
+rabbit_virtual_host = {{ trove_rabbitmq_vhost }}
+rabbit_userid = {{ trove_rabbitmq_vhost }}
+rabbit_password = {{ trove_rabbitmq_vhost }}
+
+[keystone_authtoken]
+auth_uri = http://{{ internal_vip }}:5000
+auth_url = http://{{ internal_vip }}:35357
+memcached_servers = {{ memcached_servers }}
+project_domain_name = {{ trove_service_project_domain_id }}
+user_domain_name = {{ trove_service_user_domain_id }}
+project_name = {{ trove_service_project_name }}
+username = {{ trove_service_user_name }}
+password = {{ trove_service_user_pass }}
+
+

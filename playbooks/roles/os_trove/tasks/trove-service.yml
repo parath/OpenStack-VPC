@@ -1,0 +1,66 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create Trove user
+  os_user:
+    state: present
+    name: "{{ trove_service_user_name }}"
+    password: "{{ trove_service_user_pass }}"
+    domain: "{{ trove_service_user_domain_id }}"
+    default_project: "{{ trove_service_project_name }}"
+    region_name: "{{ trove_service_region }}"
+    auth:
+      auth_url: http://{{ internal_vip }}:35357/v3
+      username: admin 
+      password: "{{ keystone_admin_user_password }}"
+      project_name: admin
+      project_domain_name: default
+      user_domain_name: default
+  tags:
+    - trove-service
+
+- name: Assosiate trove user with admin role
+  os_user_role:
+    user: "{{ trove_service_user_name }}"
+    role: "{{ trove_service_role_name }}"
+    project: "{{ trove_service_project_name }}"
+    auth:
+      auth_url: http://{{ internal_vip }}:35357/v3
+      username: admin 
+      password: "{{ keystone_admin_user_password }}"
+      project_name: admin
+      project_domain_name: default
+      user_domain_name: default
+  tags:
+    - trove-service
+
+- name: Check if trove service is present
+  shell: source /root/openrc && openstack service list
+  register: trove_service
+  tags:
+    - trove-service
+
+- name: Create trove service entity
+  shell: source /root/openrc && openstack service create --name {{ trove_service_user_name }} \
+           --description "OpenStack Database service" database
+  when: "trove_service.stdout.find('trove') == -1"
+  tags:
+    - trove-service
+
+- name: Check if trove endpoints are present
+  shell: source /root/openrc && openstack endpoint list
+  register: trove_endpoint
+  tags:
+    - trove-service
+    - trove-endpoint
+
+- name: Create trove service endpoint
+  shell: source /root/openrc && openstack endpoint create --region {{ trove_service_region }} database {{ item.key }} "http://{{ item.value }}:8779"
+  when: "trove_endpoint.stdout.find('trove') == -1"
+  with_items:
+    - { key: "public", value: "{{ external_vip }}" }
+    - { key: "internal", value: "{{ internal_vip }}" }
+    - { key: "admin", value: "{{ internal_vip }}" }
+  tags:
+    - trove-service
+    - trove-endpoint

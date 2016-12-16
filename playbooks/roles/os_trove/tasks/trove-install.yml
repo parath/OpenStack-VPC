@@ -1,0 +1,10 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Install Trove packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ trove_yum_packages }}"
+  tags:
+    - cinder-install

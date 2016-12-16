@@ -1,0 +1,41 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Create trove database
+  mysql_db:
+    name: "{{item}}"
+    state: present
+    login_host: "{{ groups['galera'][0] }}"
+    login_user: root
+    login_password: "{{ galera_root_pass }}"
+  with_items:
+    - "{{ trove_db_name }}"
+  tags:
+    - trove-db-setup
+
+- name: Create trove db user
+  mysql_user:
+    state: present
+    name: "{{ trove_db_user }}"
+    host: "{{ item }}"
+    priv: "{{ trove_db_name }}.*:ALL"
+    password: "{{ trove_db_pass }}"
+    login_host: "{{ groups['galera'][0] }}"
+    login_user: root
+    login_password: "{{ galera_root_pass }}"
+  with_items:
+    - "localhost"
+    - "%"
+  tags:
+    - trove-db-setup
+
+- name: Perform a trove DB sync
+  command: trove-manage db_sync
+  sudo: yes
+  sudo_user: "{{ trove_system_user }}"
+  with_items:
+    - "{{  trove_db_name }}"
+  tags:
+    - trove-db-setup
+    - trove-db-sync
+    - trove-setup

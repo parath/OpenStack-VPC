@@ -1,0 +1,36 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+# Trove Serice details
+trove_service_user_name: trove
+trove_service_user_pass: trove_pass
+trove_service_role_name: "admin"
+trove_service_project_domain_id: default
+trove_service_user_domain_id: default
+trove_service_project_name: service
+trove_service_region: RegionOne
+
+# Trove Database details
+trove_db_name: trove
+trove_db_pass: "!trove!"
+trove_db_user: trove
+
+# Trove system details
+trove_system_user: trove
+trove_system_group: trove
+
+# Trove RabbitMQ Details
+trove_rabbitmq_userid: trove
+trove_rabbitmq_pass: trove
+trove_rabbitmq_vhost: /trove
+
+# Trove services
+trove_services:
+  - openstack-trove-api
+  - openstack-trove-conductor
+  - openstack-trove-taskmanager
+
+# Trove packages
+trove_yum_packages:
+  - openstack-trove
+  - python-troveclient

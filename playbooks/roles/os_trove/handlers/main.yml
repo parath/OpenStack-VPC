@@ -1,0 +1,9 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: restart trove
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items: "{{ trove_services }}"

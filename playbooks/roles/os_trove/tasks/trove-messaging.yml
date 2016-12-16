@@ -1,0 +1,25 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- name: Ensure Rabbitmq vhost
+  rabbitmq_vhost:
+    name: "{{ trove_rabbitmq_vhost }}"
+    state: "present"
+  delegate_to: "{{ groups['rabbitmq'][0] }}"
+  tags:
+    - trove-rabbitmq
+    - trove-rabbitmq-vhost
+
+- name: Ensure rabbitmq user
+  rabbitmq_user:
+    user: "{{ trove_rabbitmq_userid }}"
+    password: "{{ trove_rabbitmq_pass }}"
+    vhost: "{{ trove_rabbitmq_vhost }}"
+    configure_priv: ".*"
+    read_priv: ".*"
+    write_priv: ".*"
+    state: "present"
+  delegate_to: "{{ groups['rabbitmq'][0] }}"
+  tags:
+    - trove-rabbitmq
+    - trove-rabbitmq-user

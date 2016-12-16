@@ -1,0 +1,15 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+
+- include: trove-install.yml
+- include: trove-service.yml
+  when:
+    - inventory_hostname == groups['controllers'][0]
+- include: trove-messaging.yml
+  when:
+    - inventory_hostname == groups['controllers'][0]
+- include: trove-config.yml
+- include: trove-database.yml
+  when:
+    - inventory_hostname == groups['controllers'][0]
