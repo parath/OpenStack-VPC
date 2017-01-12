@@ -1,7 +1,7 @@
 ---
 # Copyright 2016, Stackmasters.eu
 
-- name: Install Openstack Trove service	
+- name: Install Openstack Trove service
   hosts: controllers
   user: root
   roles:

@@ -1,9 +1,9 @@
 rabbit_hosts = {{ rabbitmq_hosts }}
 rabbit_virtual_host = {{ trove_rabbitmq_vhost }}
-rabbit_userid = {{ trove_rabbitmq_vhost }}
-rabbit_password = {{ trove_rabbitmq_vhost }}
+rabbit_userid = {{ trove_rabbitmq_userid }}
+rabbit_password = {{ trove_rabbitmq_pass }}
 nova_proxy_admin_user = admin
-nova_proxy_admin_pass = ADMIN_PASS
-nova_proxy_admin_tenant_name = service
-trove_auth_url = http://controller:35357/v2.0
+nova_proxy_admin_pass = stack123
+nova_proxy_admin_tenant_id = d4159f6e9ac640ef853733f7e7c6831b
+trove_auth_url = http://{{ external_vip }}:35357/v2.0
 

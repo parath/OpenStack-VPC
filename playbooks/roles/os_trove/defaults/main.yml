@@ -1,6 +1,10 @@
 ---
 # Copyright 2016, Stackmasters.eu
 
+# Listen options
+trove_api_listen_address: "{{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}"
+trove_api_listen_port: 8779
+
 # Trove Serice details
 trove_service_user_name: trove
 trove_service_user_pass: trove_pass

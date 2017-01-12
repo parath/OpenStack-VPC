@@ -1,10 +1,10 @@
 [DEFAULT]
 log_dir = /var/log/trove
-trove_auth_url = http://{{ internal_vip }}:5000/v2.0
+trove_auth_url = http://{{ internal_vip }}:35357/v2.0
 nova_compute_url = http://{{ internal_vip }}:8774/v2
 cinder_url = http://{{ internal_vip }}:8776/v1
 swift_url = http://{{ internal_vip }}:8080/v1/AUTH_
-notifier_queue_hostname = controller
+notifier_queue_hostname = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
 rpc_backend = rabbit
 
 [database]
@@ -13,5 +13,5 @@ connection = mysql+pymysql://{{ trove_db_user }}:{{ trove_db_pass }}@{{ internal
 [oslo_messaging_rabbit]
 rabbit_hosts = {{ rabbitmq_hosts }}
 rabbit_virtual_host = {{ trove_rabbitmq_vhost }}
-rabbit_userid = {{ trove_rabbitmq_vhost }}
-rabbit_password = {{ trove_rabbitmq_vhost }}
+rabbit_userid = {{ trove_rabbitmq_userid }}
+rabbit_password = {{ trove_rabbitmq_pass }}

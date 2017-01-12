@@ -4,7 +4,8 @@ trove_auth_url = http://{{ internal_vip }}:5000/v2.0
 nova_compute_url = http://{{ internal_vip }}:8774/v2
 cinder_url = http://{{ internal_vip }}:8776/v1
 swift_url = http://{{ internal_vip }}:8080/v1/AUTH_
-notifier_queue_hostname = controller
+notifier_queue_hostname = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
+exists_notification_transformer=False
 rpc_backend = rabbit
 
 # Configuration options for talking to nova via the novaclient.
@@ -13,7 +14,7 @@ rpc_backend = rabbit
 # via this admin users creds,
 # basically acting like the client via that proxy token.
 nova_proxy_admin_user = admin
-nova_proxy_admin_pass = ADMIN_PASS
+nova_proxy_admin_pass = stack123
 nova_proxy_admin_tenant_name = service
 taskmanager_manager = trove.taskmanager.manager.Manager
 
@@ -23,5 +24,5 @@ connection = mysql+pymysql://{{ trove_db_user }}:{{ trove_db_pass }}@{{ internal
 [oslo_messaging_rabbit]
 rabbit_hosts = {{ rabbitmq_hosts }}
 rabbit_virtual_host = {{ trove_rabbitmq_vhost }}
-rabbit_userid = {{ trove_rabbitmq_vhost }}
-rabbit_password = {{ trove_rabbitmq_vhost }}
+rabbit_userid = {{ trove_rabbitmq_userid }}
+rabbit_password = {{ trove_rabbitmq_pass }}

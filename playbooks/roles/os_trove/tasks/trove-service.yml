@@ -11,7 +11,7 @@
     region_name: "{{ trove_service_region }}"
     auth:
       auth_url: http://{{ internal_vip }}:35357/v3
-      username: admin 
+      username: admin
       password: "{{ keystone_admin_user_password }}"
       project_name: admin
       project_domain_name: default
@@ -26,7 +26,7 @@
     project: "{{ trove_service_project_name }}"
     auth:
       auth_url: http://{{ internal_vip }}:35357/v3
-      username: admin 
+      username: admin
       password: "{{ keystone_admin_user_password }}"
       project_name: admin
       project_domain_name: default
