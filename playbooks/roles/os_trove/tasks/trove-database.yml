@@ -31,8 +31,8 @@
 
 - name: Perform a trove DB sync
   command: trove-manage db_sync
-  sudo: yes
-  sudo_user: "{{ trove_system_user }}"
+  become: yes
+  become_user: "{{ trove_system_user }}"
   with_items:
     - "{{  trove_db_name }}"
   tags:

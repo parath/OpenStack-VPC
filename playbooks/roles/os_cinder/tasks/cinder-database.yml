@@ -32,8 +32,8 @@
 
 - name: Perform a Cinder DB sync
   command: cinder-manage db sync
-  sudo: yes
-  sudo_user: "{{ cinder_system_user }}"
+  become: yes
+  become_user: "{{ cinder_system_user }}"
   with_items:
     - "{{  cinder_db_name }}"
   tags:

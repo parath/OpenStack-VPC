@@ -32,8 +32,8 @@
 
 - name: Perform a Glance DB sync
   command: glance-manage db_sync
-  sudo: yes
-  sudo_user: "{{ glance_system_user }}"
+  become: yes
+  become_user: "{{ glance_system_user }}"
   with_items:
     - "{{  glance_db_name }}"
   tags:

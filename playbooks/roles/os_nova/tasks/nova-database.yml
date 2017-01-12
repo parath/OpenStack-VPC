@@ -32,8 +32,8 @@
 
 - name: Perform a Nova DB sync
   command: nova-manage {{ item }} sync
-  sudo: yes
-  sudo_user: "{{ nova_system_user }}"
+  become: yes
+  become_user: "{{ nova_system_user }}"
   with_items:
     - "api_db"
     - "db"

@@ -30,10 +30,10 @@
     - neutron-db-setup
 
 - name: Perform a Neutron DB sync
-  shell: "neutron-db-manage --config-file /etc/neutron/neutron.conf \
+  command: "neutron-db-manage --config-file /etc/neutron/neutron.conf \
   --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head"
-  sudo: yes
-  sudo_user: "{{ neutron_system_user }}"
+  become: yes
+  become_user: "{{ neutron_system_user }}"
   tags:
     - neutron-db-setup
     - neutron-setup
