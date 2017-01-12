@@ -46,8 +46,7 @@
     - nova-key
 
 - name: Get public key contents and store as var
-  command: |
-    cat /var/lib/nova/.ssh/id_rsa.pub
+  command: cat /var/lib/nova/.ssh/id_rsa.pub
   register: nova_pub
   changed_when: false
   tags:
