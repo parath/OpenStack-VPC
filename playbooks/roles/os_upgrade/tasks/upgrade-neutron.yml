@@ -1,0 +1,30 @@
+---
+# Copyright 2017, Stackmasters.eu
+
+- name: Stop Neutron services
+  command: openstack-service stop neutron
+  tags:
+    - upgrade-neutron
+
+- name: Upgrade Neutron packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - \*neutron\*
+  tags:
+    - upgrade-neutron
+
+- name: Upgrade the Neutron database
+  command: neutron-db-manage upgrade heads
+  sudo: yes
+  sudo_user: "{{ neutron_system_user_name }}"
+  ignore_errors: yes
+  tags:
+    - upgrade-neutron
+    - upgrade-neutron-db
+
+- name: Start Neutron services
+  command: openstack-service start neutron
+  tags:
+    - upgrade-neutron

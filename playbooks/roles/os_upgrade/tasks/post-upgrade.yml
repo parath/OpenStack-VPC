@@ -1,0 +1,9 @@
+---
+# Copyright 2017, Stackmasters.eu
+
+- name: Upgrade Neutron packages
+  yum:
+    name: "*"
+    state: latest
+  tags:
+    - upgrade-all packages

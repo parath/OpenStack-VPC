@@ -1,0 +1,45 @@
+---
+# Copyright 2017, Stackmasters.eu
+
+- name: Upgrade the Nova database
+  command: crudini --set /etc/nova/nova.conf upgrade_levels compute mitaka
+  ignore_errors: yes
+  tags:
+    - upgrade-nova
+
+- name: Stop Nova services
+  command: openstack-service stop nova
+  tags:
+    - upgrade-nova
+
+- name: Upgrade Nova packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - \*nova\*
+  tags:
+    - upgrade-nova
+
+- name: Upgrade the Nova database
+  command: nova-manage {{ item }} sync
+  sudo: yes
+  sudo_user: "{{ nova_system_user_name }}"
+  ignore_errors: yes
+  with_items:
+    - api_db
+    - db
+  tags:
+    - upgrade-nova
+    - upgrade-nova-db
+
+- name: Upgrade the Nova database
+  command: crudini --del /etc/nova/nova.conf upgrade_levels compute
+  ignore_errors: yes
+  tags:
+    - upgrade-nova
+
+- name: Start Nova services
+  command: openstack-service start nova
+  tags:
+    - upgrade-nova

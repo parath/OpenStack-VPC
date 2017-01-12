@@ -1,0 +1,16 @@
+---
+# Copyright 2016, Stackmasters.eu
+
+- include: upgrade-repo.yml
+- include: upgrade-keystone.yml
+  when: "inventory_hostname in groups['keystone']"
+- include: upgrade-glance.yml
+  when: "inventory_hostname in groups['glance']"
+- include: upgrade-cinder.yml
+  when: "inventory_hostname in groups['cinder']"
+- include: upgrade-heat.yml
+  when: "inventory_hostname in groups['heat']"
+- include: upgrade-nova.yml
+  when: "inventory_hostname in groups['nova']"
+- include: upgrade-neutron.yml
+  when: "inventory_hostname in groups['neutron']"

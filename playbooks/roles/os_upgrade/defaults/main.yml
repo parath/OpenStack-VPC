@@ -1,0 +1,6 @@
+---
+# Copyright 2017, Stackmasters.eu
+
+# Target and present Openstack Releases
+upgrade_target_release: newton
+upgrade_present_release: mitaka

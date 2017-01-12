@@ -1,0 +1,30 @@
+---
+# Copyright 2017, Stackmasters.eu
+
+- name: Stop Cinder services
+  command: openstack-service stop cinder
+  tags:
+    - upgrade-cinder
+
+- name: Upgrade Cinder packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - \*cinder\*
+  tags:
+    - upgrade-cinder
+
+- name: Upgrade the Cinder database
+  command: cinder-manage db sync
+  sudo: yes
+  sudo_user: "{{ cinder_system_user_name }}"
+  ignore_errors: yes
+  tags:
+    - upgrade-cinder
+    - upgrade-cinder-db
+
+- name: Start Cinder services
+  command: openstack-service start cinder
+  tags:
+    - upgrade-cinder

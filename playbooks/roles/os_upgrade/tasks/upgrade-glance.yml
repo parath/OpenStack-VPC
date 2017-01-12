@@ -1,0 +1,31 @@
+---
+# Copyright 2017, Stackmasters.eu
+
+- name: Stop Glance services
+  command: openstack-service stop glance
+  tags:
+    - upgrade-glance
+
+- name: Upgrade Glance packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - \*glance\*
+  tags:
+    - upgrade-glance
+
+- name: Upgrade the Glance database
+  command: glance-manage db_sync
+  sudo: yes
+  sudo_user: "{{ glance_system_user_name }}"
+  ignore_errors: yes
+  tags:
+    - upgrade-glance
+    - upgrade-glance-db
+
+- name: Start Glance services
+  command: openstack-service start glance
+  tags:
+    - upgrade-glance
+

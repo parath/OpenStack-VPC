@@ -1,0 +1,28 @@
+---
+# Copyright 2017, Stackmasters.eu
+
+- name: Install {{ upgrade_target_release }} repo
+  yum_repository:
+    name: "centos-release-openstack-{{ upgrade_target_release }}"
+    state: present
+  tags:
+    - upgrade-repo
+
+- name: Remove {{ upgrade_present_release }} repo
+  yum_repository:
+    name: "centos-release-openstack-{{ upgrade_present_release }}"
+    state: absent
+  tags:
+    - upgrade-repo
+
+- name: Install openstack-utils
+  yum:
+    name: openstack-utils
+    state: present
+  tags:
+    - upgrade-repo
+
+- name: Upgrade openstack-selinux
+  command: yum upgrade openstack-selinux
+  tags:
+    - upgrade-repo
