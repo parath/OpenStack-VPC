@@ -1,7 +1,7 @@
 ---
 # Copyright 2017, Stackmasters.eu
 
-- name: Upgrade Neutron packages
+- name: Upgrade all packages
   yum:
     name: "*"
     state: latest
