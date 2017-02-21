@@ -36,14 +36,14 @@
 
 - name: Upgrade the keystone database
   command: keystone-manage db_sync
-  sudo: yes
-  sudo_user: "{{ keystone_system_user_name }}"
+  become: yes
+  become_user: "{{ keystone_system_user_name }}"
   ignore_errors: yes
   tags:
     - upgrade-keystone
     - upgrade-keystone-db
 
-- name: Stop httpd service
+- name: Start httpd service
   service:
     name: httpd
     state: started

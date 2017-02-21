@@ -17,8 +17,8 @@
 
 - name: Upgrade the Glance database
   command: glance-manage db_sync
-  sudo: yes
-  sudo_user: "{{ glance_system_user_name }}"
+  become: yes
+  become_user: "{{ glance_system_user_name }}"
   ignore_errors: yes
   tags:
     - upgrade-glance

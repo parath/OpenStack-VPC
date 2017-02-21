@@ -17,8 +17,8 @@
 
 - name: Upgrade the Cinder database
   command: cinder-manage db sync
-  sudo: yes
-  sudo_user: "{{ cinder_system_user_name }}"
+  become: yes
+  become_user: "{{ cinder_system_user_name }}"
   ignore_errors: yes
   tags:
     - upgrade-cinder

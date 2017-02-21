@@ -17,8 +17,8 @@
 
 - name: Upgrade the Neutron database
   command: neutron-db-manage upgrade heads
-  sudo: yes
-  sudo_user: "{{ neutron_system_user_name }}"
+  become: yes
+  become_user: "{{ neutron_system_user_name }}"
   ignore_errors: yes
   tags:
     - upgrade-neutron

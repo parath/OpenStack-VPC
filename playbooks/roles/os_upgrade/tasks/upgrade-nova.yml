@@ -23,8 +23,8 @@
 
 - name: Upgrade the Nova database
   command: nova-manage {{ item }} sync
-  sudo: yes
-  sudo_user: "{{ nova_system_user_name }}"
+  become: yes
+  become_user: "{{ nova_system_user_name }}"
   ignore_errors: yes
   with_items:
     - api_db

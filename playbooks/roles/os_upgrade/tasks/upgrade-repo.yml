@@ -1,17 +1,20 @@
 ---
 # Copyright 2017, Stackmasters.eu
 
+- name: Remove {{ upgrade_present_release }} repo
+  yum_repository:
+    name: 
+    state: absent
+  with_items:
+    - "centos-release-openstack-{{ upgrade_present_release }}"
+    - "centos-release-ceph"
+  tags:
+    - upgrade-repo
+
 - name: Install {{ upgrade_target_release }} repo
   yum_repository:
     name: "centos-release-openstack-{{ upgrade_target_release }}"
     state: present
-  tags:
-    - upgrade-repo
-
-- name: Remove {{ upgrade_present_release }} repo
-  yum_repository:
-    name: "centos-release-openstack-{{ upgrade_present_release }}"
-    state: absent
   tags:
     - upgrade-repo
 
