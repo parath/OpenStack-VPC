@@ -1,9 +1,9 @@
 ---
 # Copyright 2017, Stackmasters.eu
 
-- name: Upgrade all packages
-  yum:
-    name: "*"
-    state: latest
-  tags:
-    - upgrade-all packages
+#- name: Upgrade all packages
+#  yum:
+#    name: "*"
+#    state: latest
+#  tags:
+#    - upgrade-all packages
