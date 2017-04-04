@@ -1,8 +1,8 @@
 ---
 # Copyright 2016, Stackmasters.eu
 
-- name: Export client.bootstrap-osd
-  shell: ceph auth get-or-create client.bootstrap-osd > /var/lib/ceph/bootstrap-osd/ceph.keyring
+- name: Create osds
+  shell: ceph osd create
   args:
     creates: /var/lib/ceph/bootstrap-osd/ceph.keyring
   tags:
@@ -10,17 +10,66 @@
     - ceph-osd-prepare
 
 - name: Prepare osd
-  shell: ceph-disk prepare --cluster {{ ceph_cluster_name }} --cluster-uuid {{ ceph_uuid }} --fs-type xfs {{ item }}
-  with_items:
-    - "{{ ceph_osd_map[inventory_hostname] }}"
+  file:
+    state: directory
+    path: /var/lib/ceph/osd/ceph-{{ ceph_osd_map[inventory_hostname].id }}
   tags:
     - ceph-osd
     - ceph-osd-prepare
 
-- name: Activate osd
-  shell: ceph-disk activate {{ item }}
-  with_items:
-    - "{{ ceph_osd_map[inventory_hostname] }}"
+- name: mkfs
+  filesystem:
+    fstype: xfs
+    dev: "{{ ceph_osd_map[inventory_hostname].dev }}"
+  tags:
+    - ceph-osd
+    - ceph-osd-prepare
+
+- name: mount osds
+  mount:
+    src: "{{ ceph_osd_map[inventory_hostname].dev }}"
+    name: "/var/lib/ceph/osd/ceph-{{ ceph_osd_map[inventory_hostname].id }}"
+    state: mounted
+    fstype: xfs
+  tags:
+    - ceph-osd
+    - ceph-osd-prepare
+
+- name: Make fs on osds
+  shell: ceph-osd -i {{ ceph_osd_map[inventory_hostname].id }} --mkfs --mkkey
+  args:
+    creates: "/var/lib/ceph/osd/ceph-{{ ceph_osd_map[inventory_hostname].id }}/journal"
+  tags:
+    - ceph-osd
+    - ceph-osd-activate
+
+- name: ceph auth add osd
+  shell: ceph auth add osd.{{ ceph_osd_map[inventory_hostname].id }} osd 'allow *' mon 'allow profile osd' -i /var/lib/ceph/osd/ceph-{{ ceph_osd_map[inventory_hostname].id }}/keyring
+  tags:
+    - ceph-osd
+    - ceph-osd-activate
+
+- name: osd crush add-bucket
+  shell: ceph osd crush add-bucket {{ inventory_hostname }} host
+  tags:
+    - ceph-osd
+    - ceph-osd-activate
+
+- name: ceph osd crush move
+  shell: ceph osd crush move {{ inventory_hostname }} root=default
+  tags:
+    - ceph-osd
+    - ceph-osd-activate
+
+
+- name: ceph osd crush add
+  shell: ceph osd crush add osd.{{ ceph_osd_map[inventory_hostname].id }} 1.0 host={{inventory_hostname}}
+  tags:
+    - ceph-osd
+    - ceph-osd-activate
+
+- name: Create sysvinit 
+  shell: touch /var/lib/ceph/mon/ceph-{{ ceph_osd_map[inventory_hostname].id }}/sysvinit
   tags:
     - ceph-osd
     - ceph-osd-activate

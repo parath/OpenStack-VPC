@@ -17,10 +17,15 @@ osd pool default min size = 1
 osd pool default pg num = 333
 osd pool default pgp num = 333
 osd crush chooseleaf type = 1
+mon_pg_warn_max_per_osd = 0
 
 
-[client.images]
-keyring = /etc/ceph/ceph.client.images.keyring
-[client.volumes]
-keyring = /etc/ceph/ceph.client.volumes.keyring
-
+[client.glance]
+keyring = /etc/ceph/ceph.client.glance.keyring
+log file = /var/log/ceph/glance.log
+[client.cinder]
+keyring = /etc/ceph/ceph.client.cinder.keyring
+log file = /var/log/ceph/cinder.log
+[client.cinder-backup]
+keyring = /etc/ceph/ceph.client.cinder-backup.keyring
+log file = /var/log/ceph/cinder-backup.log

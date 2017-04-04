@@ -16,12 +16,15 @@ ceph_repl_net: 192.168.210.0/24
 # Define osd for each hosts
 # Use devices, partitions or directories
 ceph_osd_map:
-  openstack01:
-    - /sda5
-  openstack02:
-    - /sda5
-  openstack03:
-    - /sda5
+    openstack01:
+      dev: /dev/sda5
+      id: 0
+    openstack02:
+      dev: /dev/sda5
+      id: 1
+    openstack03:
+      dev: /dev/sda5
+      id: 2
 
 ceph_openstack_keyrings:
   - { key: "client.cinder", value: "mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=volumes, allow rwx pool=vms, allow rx pool=images'" }

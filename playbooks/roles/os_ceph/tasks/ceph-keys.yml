@@ -55,7 +55,7 @@
     - /tmp/ceph.mon.keyring
     - /tmp/monmap
   tags:
-    - keystone-fernet
+    - ceph-keys
 
 - name: Add ceph keyring to admin keyring
   shell: ceph-mon --mkfs -i {{ ansible_hostname }} --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
