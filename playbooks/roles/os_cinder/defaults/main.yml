@@ -40,17 +40,6 @@ cinder_yum_packages:
 cinder_yum_volume_packages:
   - lvm2
 
-# cinder common support packges
-cinder_yum_support_packages:
-  - python-pip
-  - MySQL-python
-  - mysql-devel
-
-cinder_pip_packages:
-  - shade
-  - MySQL-python
-  - osprofiler
-
 # Cinder Ceph info
 cinder_ceph_client: cinder
 cinder_ceph_pool: volumes

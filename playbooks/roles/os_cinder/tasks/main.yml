@@ -1,7 +1,6 @@
 ---
 # Copyright 2016, Stackmasters.eu
 
-- include: cinder-pre-install.yml
 - include: cinder-install.yml
 - include: cinder-service.yml
   when:
