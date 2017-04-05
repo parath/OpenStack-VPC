@@ -11,7 +11,8 @@ osapi_compute_listen = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4'
 metadata_listen = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
 allow_resize_to_same_host=true
 memcached_servers = {{ memcached_servers }}
-
+verbose = {{ nova_verbose|default(false) }}
+debug = {{ nova_debug|default(false) }}
 [api_database]
 connection = mysql+pymysql://{{ nova_db_user }}:{{ nova_db_pass }}@{{ internal_vip }}/{{ nova_api_db_name }}
 

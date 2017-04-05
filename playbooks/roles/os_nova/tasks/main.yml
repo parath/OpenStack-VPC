@@ -1,7 +1,6 @@
 ---
 # Copyright 2016, Stackmasters.eu
 
-- include: nova-pre-install.yml
 - include: nova-messaging.yml
   when:
     - inventory_hostname == groups['nova_control'][0]

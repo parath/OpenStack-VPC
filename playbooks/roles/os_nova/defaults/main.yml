@@ -16,23 +16,15 @@ nova_db_pass: "!nova!"
 ## Nova Service Auth
 nova_service_name: nova
 nova_service_region: RegionOne
-nova_service_project_name: "service"
+nova_service_project_name: service
 nova_service_project_domain_id: default
 nova_service_user_domain_id: default
-nova_service_user_name: "nova"
-nova_service_user_pass: "nova_pass"
-nova_service_role_name: "admin"
+nova_service_user_name: nova
+nova_service_user_pass: nova_pass
+nova_service_role_name: admin
 
 nova_system_user: nova
 nova_system_group: nova
-
-# Common support packges
-nova_support_packages:
-  - MySQL-python
-  - python-pip
-
-nova_pip_packages:
-  - shade
 
 # Nova control plane yum packges
 nova_control_plane_yum_packages:

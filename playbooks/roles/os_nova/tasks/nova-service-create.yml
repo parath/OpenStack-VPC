@@ -1,28 +1,49 @@
 ---
 # Copyright 2016, Stackmasters.eu
 
-- name: Create nova user
-  os_user:
-    state: present
-    name: "{{ nova_service_user_name }}"
-    password: "{{ nova_service_user_pass }}"
-    domain: "{{ nova_service_user_domain_id }}"
-    default_project: "{{ nova_service_project_name }}"
-    region_name: "{{ nova_service_region }}"
-    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
-  tags:
-    - nova-service
-    - nova-service-user
+#- name: Create nova user
+#  os_user:
+#    state: present
+#    name: "{{ nova_service_user_name }}"
+#    password: "{{ nova_service_user_pass }}"
+#    domain: "{{ nova_service_user_domain_id }}"
+#    default_project: "{{ nova_service_project_name }}"
+#    region_name: "{{ nova_service_region }}"
+#    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+#  tags:
+#    - nova-service
+#    - nova-service-user
+#
+#- name: Assosiate Nova user with role
+#  os_user_role:
+#    user: "{{ nova_service_user_name }}"
+#    role: "{{ nova_service_role_name }}"
+#    project: "{{ nova_service_project_name }}"
+#    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+#  tags:
+#    - nova-service
+#    - nova-service-user-role
 
-- name: Assosiate Nova user with role
-  os_user_role:
-    user: "{{ nova_service_user_name }}"
-    role: "{{ nova_service_role_name }}"
-    project: "{{ nova_service_project_name }}"
-    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+- name: Check if nova user is present
+  shell: source /root/openrc && openstack user list
+  register: nova_user
   tags:
     - nova-service
-    - nova-service-user-role
+    - nova-user
+
+- name: Create nova user
+  shell: source /root/openrc && openstack user create --default- --domain {{ nova_service_user_domain_id }} --password {{ nova_service_user_pass }} nova
+  when: "nova_user.stdout.find('nova') == -1"
+  tags:
+    - glance-service
+    - glance-user
+
+- name: Make nova user admin
+  shell: source /root/openrc && openstack role add --project service --user nova admin
+#  when: "nova_user.stdout.find('nova') == -1"
+  tags:
+    - nova-service
+    - nova-user
 
 - name: Check if Nova service is present
   shell: source /root/openrc && openstack service list
