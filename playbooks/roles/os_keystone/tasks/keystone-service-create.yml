@@ -42,3 +42,8 @@
   when: "service_project.stdout.find('service') == -1"
   tags:
     - keystone-service
+
+- name: Assosiate admin user with admin role
+  shell: source /root/openrc && openstack role add --project admin --user admin admin
+  tags:
+    - keystone-service
