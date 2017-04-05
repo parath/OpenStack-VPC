@@ -1,2 +1,8 @@
 ---
 # Copyright 2016, Stackmasters.eu
+
+- name: restart chronyd
+  service:
+    name: chronyd
+    state: restarted
+    enabled: yes

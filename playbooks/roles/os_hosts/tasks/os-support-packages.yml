@@ -6,3 +6,9 @@
     name: "{{ item }}"
     state: present
   with_items: "{{ os_support_packages }}"
+
+- name: Restart network
+  service:
+    name: network
+    state: restarted
+    enabled: yes

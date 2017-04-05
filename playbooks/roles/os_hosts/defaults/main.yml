@@ -18,11 +18,8 @@ os_support_packages:
   - openvswitch
   - chrony
   - MySQL-python
-  - python-devel
+  - libselinux-python
   - bridge-utils
-  - python-pip
-
-os_pip_packages:
-  - shade
+  - python-openstackclient
 
 os_br_mgmt_subnet: "192.168.110.0/24"

@@ -1,0 +1,10 @@
+---
+# Copyright 2016-2017, Stackmasters.eu
+
+- name: temporarily disable SELinux
+  command: setenforce 0
+  ignore_errors: true
+
+- name: Disable SELinux
+  selinux: 
+    state: disabled
