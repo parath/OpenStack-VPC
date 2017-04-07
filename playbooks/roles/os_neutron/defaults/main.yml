@@ -80,12 +80,7 @@ neutron_plugins:
 neutron_ml2_mechanism_driver: "linuxbridge,l2population"
 
 # Neutron dhcp agents per network config
-neutron_dhcp_agents_per_network: 1
-
-## RabbitMQ info
-neutron_rabbitmq_userid: neutron
-neutron_rabbitmq_pass: neutron
-neutron_rabbitmq_vhost: /neutron
+neutron_dhcp_agents_per_network: 2
 
 
 # Neutron services

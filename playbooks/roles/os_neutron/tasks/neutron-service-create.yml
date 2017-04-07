@@ -1,29 +1,52 @@
 ---
 # Copyright 2016, Stackmasters.eu
 
-- name: Create neutron user
-  os_user:
-    state: present
-    name: "{{ neutron_service_user_name }}"
-    password: "{{ neutron_service_user_pass }}"
-    domain: "{{ neutron_service_user_domain_id }}"
-    default_project: "{{ neutron_service_project_name }}"
-    region_name: "{{ neutron_service_region }}"
-    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+#
+#- name: Create neutron user
+#  os_user:
+#    state: present
+#    name: "{{ neutron_service_user_name }}"
+#    password: "{{ neutron_service_user_pass }}"
+#    domain: "{{ neutron_service_user_domain_id }}"
+#    default_project: "{{ neutron_service_project_name }}"
+#    region_name: "{{ neutron_service_region }}"
+#    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+#  tags:
+#    - neutron-service
+#
+#- name: Assosiate user with role
+#  os_user_role:
+#    user: "{{ neutron_service_user_name }}"
+#    role: "{{ neutron_service_role_name }}"
+#    project: "{{ neutron_service_project_name }}"
+#    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+#  tags:
+#    - neutron-service
+#
+
+- name: Check if neutron user exists
+  shell: source /root/openrc && openstack user list
+  register: neutron_user
   tags:
     - neutron-service
+    - neutron-user
+
+- name: Create neutron user
+  shell: source /root/openrc && openstack user create --domain {{ neutron_service_user_domain_id }} --password {{ neutron_service_user_pass }} {{ neutron_service_user_name }}
+  when: "neutron_user.stdout.find('neutron') == -1"
+  tags:
+    - neutron-service
+    - neutron-user
 
 - name: Assosiate user with role
-  os_user_role:
-    user: "{{ neutron_service_user_name }}"
-    role: "{{ neutron_service_role_name }}"
-    project: "{{ neutron_service_project_name }}"
-    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+  shell: source /root/openrc && openstack role add --project service --user {{ neutron_service_user_name }} admin
+# when: "neutron_user.stdout.find('neutron') == -1"
   tags:
     - neutron-service
+    - neutron-user
 
 - name: Check if Neutron service is present
-  shell: openstack service list
+  shell: source /root/openrc && openstack service list
   register: neutron_service
   tags:
     - neutron-service
