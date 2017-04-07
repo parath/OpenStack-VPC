@@ -1,26 +1,49 @@
 ---
 # Copyright 2016, Stackmasters.eu
-
-- name: Create Glance user
-  os_user:
-    state: present
-    name: "{{ glance_service_user_name }}"
-    password: "{{ glance_service_user_pass }}"
-    domain: "{{ glance_service_user_domain_id }}"
-    default_project: "{{ glance_service_project_name }}"
-    region_name: "{{ glance_service_region }}"
-    auth: auth_url=http://{{ internal_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+#
+#- name: Create Glance user
+#  os_user:
+#    state: present
+#    name: "{{ glance_service_user_name }}"
+#    password: "{{ glance_service_user_pass }}"
+#    domain: "{{ glance_service_user_domain_id }}"
+#    default_project: "{{ glance_service_project_name }}"
+#    region_name: "{{ glance_service_region }}"
+#    auth: auth_url=http://{{ external_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }} user_domain_name=default identity_api_ver=3
+#  tags:
+#    - glance-service
+#    - glance-user
+#
+#- name: Assosiate Glance user with admin role
+#  os_user_role:
+#    user: "{{ glance_service_user_name }}"
+#    role: "{{ glance_service_role_name }}"
+#    project: "{{ glance_service_project_name }}"
+#    auth: auth_url=http://{{ external_vip }}:35357/v3 username=admin password={{ keystone_admin_user_password }}
+#  tags:
+#    - glance-service
+#
+- name: Check if glance user exists
+  shell: source /root/openrc && openstack user list
+  register: glance_user
   tags:
     - glance-service
+    - glance-user
+
+- name: Create glance user
+  shell: source /root/openrc && openstack user create --domain {{ glance_service_user_domain_id }} --password {{ glance_service_user_pass }} glance
+  when: "glance_user.stdout.find('glance') == -1"
+  tags:
+    - glance-service
+    - glance-user
 
 - name: Assosiate Glance user with admin role
-  os_user_role:
-    user: "{{ glance_service_user_name }}"
-    role: "{{ glance_service_role_name }}"
-    project: "{{ glance_service_project_name }}"
-    auth: auth_url=http://{{ internal_vip }}:35357/v3/ username=admin password={{ keystone_admin_user_password }}
+  shell: source /root/openrc && openstack role add --project service --user glance admin
+#  when: "glance_user.stdout.find('glance') == -1"
   tags:
     - glance-service
+    - glance-user-admin
+
 
 - name: Check if Glance service is present
   shell: source /root/openrc && openstack service list
