@@ -36,7 +36,7 @@ horizon_default_role_name: _member_
 horizon_keystone_multidomain_support: False
 
 # Horizon password autocomplete
-horizon_pass_autocomplete: on
+horizon_pass_autocomplete: True
 
 # OPENSTACK_CINDER_FEATURES
 horizon_enable_backup: True
@@ -46,7 +46,7 @@ horizon_enable_router: True
 horizon_enable_quotas: True
 horizon_enable_ipv6: True
 horizon_enable_distributed_router: "{{ neutron_dvr }}"
-horizon_enable_ha_router: False
+horizon_enable_ha_router: True
 horizon_enable_lb: False
 horizon_enable_firewall: False
 horizon_enable_vpn: False

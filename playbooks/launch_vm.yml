@@ -1,0 +1,23 @@
+---
+- name: Launch vms on Openstack
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  tasks:
+    - name: Creates an instance and attaches a network
+      os_server:
+        auth:
+          auth_url: 'http://10.10.110.99:5000/v3'
+          username: admin
+          password: "stack123"
+          project_name: admin
+          project_domain_name: default
+          user_domain_name: default
+        state: present
+        name: vm1
+        image: CirrOS
+        key_name: stackmasters
+        flavor: m1.tiny
+        nics:
+          - net-id: c4373485-a494-4f96-b621-d1ad0dee0bee
+

@@ -52,6 +52,6 @@ external_network_bridge =
 agent_mode = dvr
 enable_metadata_proxy = True
 
-## Include the following on all nodes running neutron-openvwsitch-agnet in /etc/neutron/plugins/ml2/ml2_conf.ini
+## Include the following on all nodes running neutron-openvwsitch-agnet in /etc/neutron/plugins/ml2/openvswitch_agent.ini
 [agent]
 enable_distributed_routing =  True

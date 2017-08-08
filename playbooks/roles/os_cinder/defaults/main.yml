@@ -31,6 +31,7 @@ cinder_control_plane_services:
 
 cinder_volume_services:
   - openstack-cinder-volume
+  - openstack-cinder-backup
   - target
 
 # cinder packages

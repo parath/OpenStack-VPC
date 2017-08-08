@@ -8,6 +8,10 @@ heat_waitcondition_server_url = http://{{ internal_vip }}:8000/v1/waitcondition
 #stack_domain_admin = {{ heat_domain_admin_name }}
 #stack_domain_admin_password = {{ heat_domain_admin_pass }}
 #stack_user_domain_name = heat
+# Instance settings
+instance_format = "[instance: %(uuid)s] "
+instance_uuid_format = "[instance: %(uuid)s] "
+
 
 [heat_api]
 # Binds
