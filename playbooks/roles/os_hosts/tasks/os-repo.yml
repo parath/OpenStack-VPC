@@ -6,6 +6,4 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - centos-release-openstack-mitaka
-
-
+    - centos-release-openstack-newton
