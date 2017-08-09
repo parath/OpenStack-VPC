@@ -1,9 +1,9 @@
 ---
 # Copyright 2016, Stackmasters.eu
 
-- name: Install Openstack Mitaka repo
+- name: Install Openstack repo
   yum:
     name: "{{ item }}"
     state: present
   with_items:
-    - centos-release-openstack-newton
+    - centos-release-openstack-mitaka
