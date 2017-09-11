@@ -52,3 +52,13 @@ memcache_servers = {list of memcached servers to connect} # e.g. 192.168.0.6:112
 ```
 
 Note that memcached_servers has been changed to memcache*_servers.
+
+## The horizon didnt allow for images to be uploaded as files or links
+
+needed ```
+REST_API_REQUIRED_SETTINGS = ['OPENSTACK_HYPERVISOR_FEATURES',
+                              'LAUNCH_INSTANCE_DEFAULTS',
+                              'OPENSTACK_IMAGE_FORMATS']
+```
+
+
