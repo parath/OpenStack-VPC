@@ -27,6 +27,6 @@ ceph_osd_map:
       id: 2
 
 ceph_openstack_keyrings:
-  - { key: "client.cinder", value: "mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=volumes, allow rwx pool=vms, allow rx pool=images'" }
+  - { key: "client.cinder", value: "mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=volumes, allow rwx pool=vms, allow rwx pool=images'" }
   - { key: "client.glance", value: "mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=images'" }
   - { key: "client.cinder-backup", value: "mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=backups'" }

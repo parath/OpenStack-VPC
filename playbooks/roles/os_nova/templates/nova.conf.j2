@@ -56,7 +56,7 @@ lock_path = /var/lib/nova/tmp
 [libvirt]
 virt_type = {{ nova_hypervisor_mode }}
 {% if ceph_mons is defined %}
-
+snapshots_directory = /var/lib/nova/tmp/
 images_type = rbd
 images_rbd_pool = {{ nova_ceph_pool }}
 images_rbd_ceph_conf = /etc/ceph/ceph.conf

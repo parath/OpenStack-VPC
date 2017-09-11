@@ -51,7 +51,7 @@ neutron_provider_networks:
 neutron_plugin_type: ml2.ovs
 
 # Types of networks supported by the ml2 plugin
-neutron_ml2_drivers_type: "flat,vxlan"
+neutron_ml2_drivers_type: "flat,vxlan,vlan"
 
 # Enable or disable L2 Population.
 neutron_l2_population: "False"
@@ -74,7 +74,7 @@ neutron_plugins:
     mechanisms: "openvswitch,l2population"
     plugin_core: neutron.plugins.ml2.plugin.Ml2Plugin
     plugin_ini: plugins/ml2/ml2_conf.ini
-    network_mappings: "flat:br-ex" 
+    network_mappings: "flat:br-ex,vlan:br-ex" 
 
 # Define the linux ml2 mechanism
 neutron_ml2_mechanism_driver: "linuxbridge,l2population"
