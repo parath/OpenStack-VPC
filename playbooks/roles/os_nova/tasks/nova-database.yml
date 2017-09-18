@@ -11,6 +11,7 @@
   with_items:
     - "{{ nova_db_name }}"
     - "{{ nova_api_db_name }}"
+    - "{{ nova_cell0_db_name }}"
   tags:
     - nova-db-setup
 
@@ -19,7 +20,7 @@
     state: present
     name: "{{ nova_db_user }}"
     host: "{{ item }}"
-    priv: "{{ nova_db_name }}.*:ALL/{{ nova_api_db_name }}.*:ALL"
+    priv: "{{ nova_db_name }}.*:ALL/{{ nova_api_db_name }}.*:ALL/{{ nova_cell0_db_name }}.*:ALL"
     password: "{{ nova_db_pass }}"
     login_host: "{{ groups['galera'][0] }}"
     login_user: root

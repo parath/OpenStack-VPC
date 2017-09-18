@@ -10,6 +10,7 @@ nova_metadata_port: 8775
 # Nova database details
 nova_db_name: nova
 nova_api_db_name: nova_api
+nova_cell0_db_name: nova_cell0
 nova_db_user: nova
 nova_db_pass: "!nova!"
 
@@ -23,6 +24,15 @@ nova_service_user_name: nova
 nova_service_user_pass: nova_pass
 nova_service_role_name: admin
 
+## Nova Placement Service Auth
+nova_placement_service_region: RegionOne
+nova_placement_service_project_domain_id: default
+nova_placement_service_project_name: service
+nova_placement_service_user_domain_id: default
+nova_placement_service_user_name: placement
+nova_placement_service_user_pass: placement_pass
+
+
 nova_system_user: nova
 nova_system_group: nova
 
@@ -33,6 +43,7 @@ nova_control_plane_yum_packages:
   - openstack-nova-console
   - openstack-nova-novncproxy
   - openstack-nova-scheduler
+  - openstack-nova-placement-api
 
 nova_control_plane_services:
   - openstack-nova-api
@@ -40,6 +51,7 @@ nova_control_plane_services:
   - openstack-nova-consoleauth
   - openstack-nova-novncproxy
   - openstack-nova-scheduler
+  - httpd
 
 # Nova compute packages
 nova_compute_yum_packages:

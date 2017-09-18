@@ -10,8 +10,19 @@ compute_driver=libvirt.LibvirtDriver
 osapi_compute_listen = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
 metadata_listen = {{ hostvars[inventory_hostname]['ansible_br_mgmt']['ipv4']['address'] }}
 allow_resize_to_same_host=true
-verbose = {{ nova_verbose|default(false) }}
 debug = {{ nova_debug|default(false) }}
+
+transport_url = rabbit://{% for host in rabbitmq_hosts %}{{ nova_rabbitmq_user }}:{{ nova_rabbitmq_password }}@{{ host }}{% if not loop.last %},{%else%}/{{ nova_rabbitmq_vhost }}{% endif %}{% endfor %}
+
+[api]
+auth_strategy = keystone
+
+[database]
+connection = mysql+pymysql://{{ nova_db_user }}:{{ nova_db_pass }}@{{ internal_vip }}/{{ nova_db_name }}
+
+[placement_database]
+connection = mysql+pymysql://{{ nova_db_user }}:{{ nova_db_pass }}@{{ internal_vip }}/{{ nova_api_db_name }}
+
 [api_database]
 connection = mysql+pymysql://{{ nova_db_user }}:{{ nova_db_pass }}@{{ internal_vip }}/{{ nova_api_db_name }}
 
@@ -20,14 +31,7 @@ enabled = True
 backend = oslo_cache.memcache_pool
 memcache_servers = {{ memcached_servers }}
 
-[database]
-connection = mysql+pymysql://{{ nova_db_user }}:{{ nova_db_pass }}@{{ internal_vip }}/{{ nova_db_name }}
 
-[oslo_messaging_rabbit]
-rabbit_hosts = {{ rabbitmq_hosts }}
-rabbit_userid = {{ nova_rabbitmq_user }}
-rabbit_password = {{ nova_rabbitmq_pass }}
-rabbit_virtual_host = {{ nova_rabbitmq_vhost }}
 
 [keystone_authtoken]
 auth_uri = http://{{ internal_vip }}:5000
@@ -86,5 +90,15 @@ metadata_proxy_shared_secret = {{ neutron_metadata_agent_secret }}
 
 [cinder]
 os_region_name = RegionOne
+
+[placement]
+os_region_name = {{ nova_placement_service_region }}
+project_domain_name = {{ nova_placement_service_project_domain_id }}
+project_name = {{ nova_placement_service_project_name }}
+auth_type = password
+user_domain_name = {{ nova_placement_service_user_domain_id }}
+auth_url = ttp://{{ internal_vip }}:35357/v3
+username = {{ nova_placement_service_user_name }}
+password = {{ nova_placement_service_user_pass }}
 
 
